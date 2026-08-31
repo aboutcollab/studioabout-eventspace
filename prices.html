@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Prices & calculator — Studio About</title>
+<meta name="description" content="Every price for the event space, the food, the drinks and the extras. Build your event and see the total.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head><body>
+<nav class="nav"><div class="nav-in">
+  <a class="brand" href="index.html">Studio About<span>.</span></a>
+  <div class="nav-links"><a href="index.html">The space</a><a href="food.html">The food</a><a href="workshops.html">Workshops</a><a href="use-cases.html">What you can host</a><a href="prices.html" aria-current="page">Prices &amp; calculator</a></div>
+  <a class="cta" href="prices.html#calc">Price your event</a>
+</div></nav>
+
+<header class="hero" style="padding-bottom:clamp(40px,5vw,70px)">
+  <div class="wrap">
+    <p class="eyebrow">Prices</p>
+    <h1 style="max-width:20ch">Here is what everything costs.</h1>
+    <p class="lede" style="margin-top:20px">All of it. The room, the food, the drinks, the
+       extras, the cleaning, the deposit. Nothing is a "from" price and nothing arrives later
+       in a PDF. Build your event below and the total is the total.</p>
+  </div>
+</header>
+
+
+<section class="calc" id="calc"><div class="wrap">
+  <p class="eyebrow">Price your event</p>
+  <h2>Build it. See what it costs.</h2>
+  <p class="lede" style="margin-bottom:34px">Nothing here is a guess or a starting price.
+     This is what you would pay.</p>
+  <div class="calc-grid">
+    <div class="panel">
+      <fieldset class="fieldset">
+        <div class="legend">1 <b>Who is booking</b></div>
+        <div class="seg" id="segAudience">
+          <button data-v="business" aria-pressed="true">A business</button>
+          <button data-v="private" aria-pressed="false">A private event</button>
+        </div>
+        <p class="hint">Businesses see prices <b>excluding BTW</b>, private bookers see them
+           <b>including BTW</b>. Same price either way — just the way you need to read it.</p>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <div class="legend">2 <b>When, and for how long</b></div>
+        <div class="row">
+          <div class="field"><label for="f_date">Date</label>
+            <input type="date" id="f_date"></div>
+          <div class="field"><label for="f_from">Doors open</label>
+            <input type="time" id="f_from" step="1800"></div>
+          <div class="field"><label for="f_to">You are out by</label>
+            <input type="time" id="f_to" step="1800"></div>
+        </div>
+        <p class="hint"><b>The hours you book are the hours you have the space.</b>
+           Count your set-up and clear-out in — most people need about an hour at each end.
+           You can get in from the time you booked, and if you are still here after it,
+           the extra time is charged at the same hourly rate.
+           Evenings run to 04:00; hours from 20:00
+           carry +15%.</p>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <div class="legend">3 <b>How many, and how they sit</b></div>
+        <div class="row">
+          <div class="field" style="flex:0 0 130px"><label for="f_people">People</label>
+            <input type="number" id="f_people" min="1" max="120" step="1"></div>
+          <div class="field" style="flex:1 1 auto"><label>Setup</label>
+            <div class="seg" id="segSetup">
+              <button data-v="workshop" aria-pressed="true">Workshop</button>
+              <button data-v="dinner" aria-pressed="false">Dinner</button>
+              <button data-v="theatre" aria-pressed="false">Theatre</button>
+              <button data-v="standing" aria-pressed="false">Standing</button>
+            </div></div>
+        </div>
+        <p class="hint">You never have to think in square metres. Tell us how many people and
+           how they sit, and the right size of room follows. Up to 120 people.</p>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <div class="legend">4 <b>Food</b></div>
+        <select id="f_food" aria-label="Food"><option value="">No food</option><option value="lunch_simple">Simple Lunch — €20 pp</option><option value="lunch_buffet_full">Buffet Lunch — €24,50 pp · 12+</option><option value="lunch_plated">Plated Lunch — €27,50 pp · ≤16</option><option value="dinner_2course">Plated Dinner — €30 pp · ≤15</option><option value="dinner_plated">Plated Dinner — €34,50 pp · ≤15</option><option value="dinner_buffet">Buffet Dinner — €29,50 pp · 16+</option><option value="churrasco">Churrasco — €47,50 pp · 15+</option><option value="bites">Brazilian Bites — €7–€12 pp</option><option value="borrel_soft">Borrel — €7,50 pp per hour</option><option value="borrel_alc">Borrel — €10 pp per hour</option><option value="dessert_round">Sweet finish — €4,50 pp</option></select>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <div class="legend">5 <b>Drinks</b></div>
+        <select id="f_drinks" aria-label="Drinks"><option value="">No drinks package</option><option value="p1">Package 1 — €1,75 pp per hour</option><option value="p2">Package 2 — €2,50 pp per hour</option><option value="p3">Package 3 — €6 pp per hour</option><option value="p4">Package 4 — €9 pp per hour</option></select>
+        <div class="row" id="serveRow" hidden style="margin-top:12px">
+          <div class="field" style="flex:0 0 190px">
+            <label for="f_servehours">Serving for how many hours?</label>
+            <input type="number" id="f_servehours" min="2"
+                   max="24" step="0.5"></div>
+        </div>
+        <p class="hint">Drinks and the borrel are charged per person, per hour, minimum
+           2 hours. We start it at the length of your booking —
+           <b>turn it down to the hours you are actually pouring</b>, since nobody is drinking
+           while you set up.</p>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <div class="legend">6 <b>Extras</b></div>
+        <div class="checks"><label class="check"><input type="checkbox" class="addon" data-k="sound"><span>Sound set — 2 speakers + wireless mic</span><span class="p">€45</span></label><label class="check"><input type="checkbox" class="addon" data-k="lights"><span>Party light package (incl. black lights)</span><span class="p">€60</span></label><label class="check"><input type="checkbox" class="addon" data-k="djbooth"><span>DJ booth table</span><span class="p">€40</span></label><label class="check"><input type="checkbox" class="addon" data-k="flipchart"><span>Flipchart + markers</span><span class="p">€15</span></label></div>
+        <p class="hint">Projector and screen come with the room — we are not charging you
+           for something we needed anyway.</p>
+      </fieldset>
+
+      <fieldset class="fieldset">
+        <label class="check" style="max-width:420px">
+          <input type="checkbox" id="f_hetsalon">
+          <span>I am part of the Het Salon community</span>
+          <span class="p">−30%</span></label>
+      </fieldset>
+    </div>
+
+    <aside class="receipt" id="receipt"></aside>
+  </div>
+</div></section>
+
+
+<section><div class="wrap">
+  <p class="eyebrow">The room</p>
+  <h2>By the hour, one price every day.</h2>
+  <p class="lede" style="margin-bottom:26px">Weekday or Saturday, the rate is the same. Tell us
+     how many people and how they sit, and the size follows.</p>
+  <div class="tablewrap"><table>
+<thead><tr><th>Size</th><th>Per hour</th><th class="num">Workshop</th><th class="num">Dinner</th>
+<th class="num">Theatre</th><th class="num">Standing</th><th class="num">Cleaning</th></tr></thead>
+<tbody><tr><td><b>1–50 m²</b></td><td class='price'>€50/h</td><td class='num'>1–20</td><td class='num'>1–28</td><td class='num'>1–66</td><td class='num'>1–40</td><td class='num'>€25</td></tr><tr><td><b>51–100 m²</b></td><td class='price'>€75/h</td><td class='num'>21–41</td><td class='num'>29–57</td><td class='num'>67–120</td><td class='num'>41–80</td><td class='num'>€50</td></tr><tr><td><b>101–150 m²</b></td><td class='price'>€95/h</td><td class='num'>42–62</td><td class='num'>58–85</td><td class='num'>—</td><td class='num'>81–120</td><td class='num'>€75</td></tr></tbody></table></div>
+<p class="swipe">swipe sideways →</p>
+  <p style="font-size:14.5px;color:var(--ink-2);margin-top:16px;max-width:74ch">
+    Cleaning is charged per booking on top of the hours, so you can see it rather than
+    wonder whether it is buried in the rate. Every booked hour from 20:00
+    carries +15%; events can run to 04:00.
+    Deposit €150, refundable. Bringing your own caterer costs
+    €150.</p>
+</div></section>
+
+<section class="dark"><div class="wrap">
+  <p class="eyebrow">The food</p>
+  <h2>Priced per person, cooked in the building.</h2>
+  <div class="grid g2" style="margin-top:28px;align-items:start">
+    <div>
+      <h3 style="margin-bottom:12px">Lunch</h3>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Simple Lunch</b><br><span style='color:var(--ink-3);font-size:13.5px'>one main delicious dish</span></td><td class='num'>any group</td><td class='price'>€20 pp</td></tr><tr><td><b>Buffet Lunch</b><br><span style='color:var(--ink-3);font-size:13.5px'>main + dessert</span></td><td class='num'>12+</td><td class='price'>€24,50 pp</td></tr><tr><td><b>Plated Lunch</b><br><span style='color:var(--ink-3);font-size:13.5px'>main + dessert, served at table</span></td><td class='num'>≤16</td><td class='price'>€27,50 pp</td></tr></tbody></table></div>
+      <h3 style="margin:28px 0 12px">Dinner</h3>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Plated Dinner</b><br><span style='color:var(--ink-3);font-size:13.5px'>2 courses, served</span></td><td class='num'>≤15</td><td class='price'>€30 pp</td></tr><tr><td><b>Plated Dinner</b><br><span style='color:var(--ink-3);font-size:13.5px'>3 courses, served</span></td><td class='num'>≤15</td><td class='price'>€34,50 pp</td></tr><tr><td><b>Buffet Dinner</b><br><span style='color:var(--ink-3);font-size:13.5px'>walk-in, chef-served, with dessert</span></td><td class='num'>16+</td><td class='price'>€29,50 pp</td></tr><tr><td><b>Churrasco</b><br><span style='color:var(--ink-3);font-size:13.5px'>full Brazilian BBQ experience + dessert, lunch or dinner</span></td><td class='num'>15+</td><td class='price'>€47,50 pp</td></tr></tbody></table></div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:12px">Bites, borrel and something sweet</h3>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Brazilian Bites</b><br><span style='color:var(--ink-3);font-size:13.5px'>tailored to your event, about 6 pieces a person</span></td><td class='num'>any group</td><td class='price'>€7–€12 pp</td></tr><tr><td><b>Borrel</b><br><span style='color:var(--ink-3);font-size:13.5px'>drinks + bites, pp per HOUR, no alcohol</span></td><td class='num'>any group</td><td class='price'>€7,50 pp / hour</td></tr><tr><td><b>Borrel</b><br><span style='color:var(--ink-3);font-size:13.5px'>drinks + bites, pp per HOUR, with alcohol</span></td><td class='num'>any group</td><td class='price'>€10 pp / hour</td></tr><tr><td><b>Sweet finish</b><br><span style='color:var(--ink-3);font-size:13.5px'>a delicious dessert everyone will like</span></td><td class='num'>any group</td><td class='price'>€4,50 pp</td></tr></tbody></table></div>
+      <h3 style="margin:28px 0 12px">Drinks</h3>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Package 1</b><br><span style='color:var(--ink-3);font-size:13.5px'>coffee, tea, still + sparkling water</span></td><td class='price'>€1,75 pp / hour</td></tr><tr><td><b>Package 2</b><br><span style='color:var(--ink-3);font-size:13.5px'>+ iced tea, sodas, juices</span></td><td class='price'>€2,50 pp / hour</td></tr><tr><td><b>Package 3</b><br><span style='color:var(--ink-3);font-size:13.5px'>+ wine & beer</span></td><td class='price'>€6 pp / hour</td></tr><tr><td><b>Package 4</b><br><span style='color:var(--ink-3);font-size:13.5px'>+ premium cocktails</span></td><td class='price'>€9 pp / hour</td></tr></tbody></table></div>
+      <p style="font-size:14px;color:var(--onNight-2);margin-top:12px">
+        Per person, per hour, minimum 2 hours. A borrel is drinks and
+        bites together; the packages above are drinks alone.</p>
+    </div>
+  </div>
+  <p style="font-size:14.5px;color:var(--onNight-2);margin-top:28px;max-width:74ch">
+    Buffets run from 15 people. Below that the plated menus are the
+    better offer, or a buffet costs €2 per person more.
+    <a href="food.html" style="color:var(--grow)">See what the food actually is →</a></p>
+</div></section>
+
+<section><div class="wrap">
+  <p class="eyebrow">Extras</p>
+  <h2>The short list.</h2>
+  <p class="lede" style="margin-bottom:24px">We kept this deliberately short. If we needed it
+     in the room anyway, you are not paying for it.</p>
+  <div class="tablewrap" style="max-width:560px"><table style="min-width:320px">
+    <tbody><tr><td><b>Sound set — 2 speakers + wireless mic</b></td><td class='price'>€45</td></tr><tr><td><b>Party light package (incl. black lights)</b></td><td class='price'>€60</td></tr><tr><td><b>DJ booth table</b></td><td class='price'>€40</td></tr><tr><td><b>Flipchart + markers</b></td><td class='price'>€15</td></tr><tr><td><b>Projector and screen</b></td><td class='price' style='color:var(--leaf)'>included</td></tr></tbody></table></div>
+</div></section>
+
+
+<section id="request"><div class="wrap">
+  <p class="eyebrow">Request a date</p>
+  <h2>Send us the event you just built.</h2>
+  <p class="lede">Your calculation travels with the request, so our reply is a confirmation —
+     not a new set of numbers. We answer within 24 hours.</p>
+  <div class="panel" style="margin-top:28px;max-width:760px">
+    <p style="font-size:15.5px;color:var(--ink-2)">Copy the summary below into an email to
+       <a href="mailto:hello@studioabout.art"><b>hello@studioabout.art</b></a>, or call +31 6 5146 5308. A booking system is
+       coming; for now a human reads every request, which we would do anyway — we approve
+       every booking.</p>
+    <textarea id="calcSummary" readonly rows="10" style="width:100%;font-family:var(--mono);
+      font-size:12.5px;padding:14px;border:1px solid var(--rule);border-radius:5px;
+      background:var(--paper);color:var(--ink);line-height:1.6"
+      aria-label="Your event summary"></textarea>
+    <p style="margin:14px 0 0"><a class="btn" href="mailto:hello@studioabout.art?subject=Event%20request">
+      Email us this event</a></p>
+  </div>
+</div></section>
+
+<section><div class="wrap"><p class="eyebrow">The details, up front</p><h2>Things you would otherwise have to ask.</h2><div style="margin-top:30px"><details class='faq'><summary>How do the hours work?</summary><p>The hours you book are the hours you have the space. Set-up and clear-out happen inside them, so count them in — most people need about an hour at each end. You can get in from the time you booked, and if you are still here afterwards the extra time is charged at the same hourly rate. That is how the whole market works; we just say it out loud instead of putting it in a contract you read later.</p></details><details class='faq'><summary>Is the cleaning included?</summary><p>No, and it is on the price list rather than hidden in the hourly rate: €25, €50 or €75 depending on the size of the room. That is our cleaning after you leave. We do expect the space back in order — furniture where you found it, your things gone.</p></details><details class='faq'><summary>What does the room come with?</summary><p>Tables, chairs, and a projector and screen at no charge. We set the room up the way you need it — tell us the setup when you book. Sound, party lights and a DJ booth are on the extras list.</p></details><details class='faq'><summary>Can we bring our own caterer?</summary><p>Yes, for €150 per event. Our own kitchen is the reason most people book us, so we would rather cook for you — but you are not forced onto it. Drinks are always ours.</p></details><details class='faq'><summary>Is there a deposit?</summary><p>€150, refunded after the event when the space comes back in order. It is not part of the price and carries no BTW.</p></details><details class='faq'><summary>What about noise, and how late can we go?</summary><p>Events can run to 04:00. Every booked hour from 20:00 carries +15% — that pays the person who stays with you. It is in the calculator, so you see it before you ask.</p></details><details class='faq'><summary>Can you make the room smaller?</summary><p>Yes. It is 150 m² with walls that roll, so we build the room around your event rather than sitting you in a hall that is too big. The three sizes on the price list are how we price it; the actual shape is made for you.</p></details><details class='faq'><summary>Do you approve every booking?</summary><p>Yes, always — there is no instant booking here and there never will be. You will hear from us within 24 hours.</p></details></div></div></section>
+
+<footer><div class="wrap">
+  <div class="foot-grid">
+    <div>
+      <h4>Where</h4>
+      <p style="margin:0 0 6px">Magneetstraat 3, 1014 CC Amsterdam<br>Two minutes from Amsterdam Sloterdijk station.</p>
+      <p style="margin:0">Opening January 2027.</p>
+    </div>
+    <div><h4>Talk to us</h4><ul>
+      <li><a href="mailto:hello@studioabout.art">hello@studioabout.art</a></li>
+      <li><a href="tel:+31651465308">+31 6 5146 5308</a></li>
+    </ul></div>
+    <div><h4>Pages</h4><ul>
+      <li><a href="index.html">The space</a></li><li><a href="food.html">The food</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="use-cases.html">What you can host</a></li><li><a href="prices.html">Prices &amp; calculator</a></li>
+    </ul></div>
+  </div>
+  <p class="draft">Working draft, 31 August 2026 —
+     built to show the business, not to take bookings yet. Prices are decided and current;
+     the room is shown as a drawing because it is still being built. Opening January 2027.</p>
+</div></footer>
+<script>window.SA_DATA={"bands": [{"key": "B1", "label": "up to 50 m²", "m2_lo": 1, "m2_hi": 50, "price": 50.0, "cleaning": 25.0, "workshop": [1, 20], "dinner": [1, 28], "standing": [1, 40], "theatre": [1, 66]}, {"key": "B2", "label": "51–100 m²", "m2_lo": 51, "m2_hi": 100, "price": 75.0, "cleaning": 50.0, "workshop": [21, 41], "dinner": [29, 57], "standing": [41, 80], "theatre": [67, 120]}, {"key": "B3", "label": "101–150 m²", "m2_lo": 101, "m2_hi": 150, "price": 95.0, "cleaning": 75.0, "workshop": [42, 62], "dinner": [58, 85], "standing": [81, 120], "theatre": null}], "food": [{"key": "lunch_simple", "label": "Simple Lunch — one main delicious dish", "group": "any", "pp": 20.0, "status": "DECIDED", "per_hour": false, "btw": 0.09}, {"key": "lunch_buffet_full", "label": "Buffet Lunch — main + dessert", "group": "12+", "pp": 24.5, "status": "DECIDED", "per_hour": false, "btw": 0.09}, {"key": "lunch_plated", "label": "Plated Lunch — main + dessert, served at table", "group": "≤16", "pp": 27.5, "status": "DECIDED", "per_hour": false, "btw": 0.09}, {"key": "dinner_2course", "label": "Plated Dinner — 2 courses, served", "group": "≤15", "pp": 30.0, "status": "DERIVED", "per_hour": false, "btw": 0.09}, {"key": "dinner_plated", "label": "Plated Dinner — 3 courses, served", "group": "≤15", "pp": 34.5, "status": "DECIDED", "per_hour": false, "btw": 0.09}, {"key": "dinner_buffet", "label": "Buffet Dinner — walk-in, chef-served, with dessert", "group": "16+", "pp": 29.5, "status": "DECIDED", "per_hour": false, "btw": 0.09}, {"key": "churrasco", "label": "Churrasco — full Brazilian BBQ experience + dessert, lunch or dinner", "group": "15+", "pp": 47.5, "status": "DECIDED", "per_hour": false, "btw": 0.09}, {"key": "bites", "label": "Brazilian Bites — custom offer per event", "group": "any", "pp": 0.0, "status": "DECIDED range", "per_hour": false, "btw": 0.09}, {"key": "borrel_soft", "label": "Borrel — drinks + bites, pp per HOUR, no alcohol", "group": "any", "pp": 7.5, "status": "DECIDED", "per_hour": true, "btw": 0.09}, {"key": "borrel_alc", "label": "Borrel — drinks + bites, pp per HOUR, with alcohol", "group": "any", "pp": 10.0, "status": "DECIDED", "per_hour": true, "btw": 0.09}, {"key": "dessert_round", "label": "Sweet finish — a delicious dessert everyone will like", "group": "any", "pp": 4.5, "status": "DECIDED", "per_hour": false, "btw": 0.09}], "drinks": [{"key": "p1", "label": "Package 1 — coffee, tea, still + sparkling water", "pph": 1.75, "status": "DECIDED", "btw": 0.09}, {"key": "p2", "label": "Package 2 — + iced tea, sodas, juices", "pph": 2.5, "status": "DECIDED", "btw": 0.09}, {"key": "p3", "label": "Package 3 — + wine & beer", "pph": 6.0, "status": "DECIDED", "btw": 0.21}, {"key": "p4", "label": "Package 4 — + premium cocktails", "pph": 9.0, "status": "DECIDED", "btw": 0.21}], "addons": [{"key": "sound", "label": "Sound set — 2 speakers + wireless mic", "price": 45.0, "btw": 0.21}, {"key": "lights", "label": "Party light package (incl. black lights)", "price": 60.0, "btw": 0.21}, {"key": "djbooth", "label": "DJ booth table", "price": 40.0, "btw": 0.21}, {"key": "flipchart", "label": "Flipchart + markers", "price": 15.0, "btw": 0.21}], "max_people": 120, "floor_m2": 150, "night_pct": 0.15, "night_from": 20, "night_until": 4, "drinks_min_hours": 2, "borg": 150.0, "kurkgeld": 150.0, "hetsalon_room_discount": 0.3, "hetsalon_food_discount": 0.2, "bites_lo": 7.0, "bites_hi": 12.0, "bites_pieces": 6, "small_group_min": 15, "small_group_surcharge": 2.0, "projector_included": true, "btw": {"food": 0.09, "alcohol": 0.21, "service": 0.21}, "overtime_same_rate": true, "_model_billable_extra": 2};</script>
+<script src="assets/calc.js"></script>
+</body></html>
