@@ -105,7 +105,10 @@
     if(dr){
       var dh = Math.max(state.drinkHours || h, D.drinks_min_hours);
       var dd = state.hetsalon ? (1 - D.hetsalon_food_discount) : 1;
-      add(dr.label.split('—')[0].trim(),
+      var drName = dr.label.indexOf('—') > -1
+        ? 'Drinks — ' + dr.label.split('—')[1].replace(/^\s*\+\s*/,'').trim()
+        : dr.label;
+      add(drName,
           '€'+dr.pph.toFixed(2).replace('.',',')+' pp per hour × '+pp+' × '+
           dh.toFixed(2).replace(/\.?0+$/,'')+' h',
           dr.pph*pp*dh*dd, dr.pph*pp*dh*dd, dr.btw);
@@ -143,7 +146,7 @@
     });
     var mainLo = inc ? r.incLo : r.exLo, mainHi = inc ? r.incHi : r.exHi;
     var othLo  = inc ? r.exLo  : r.incLo, othHi = inc ? r.exHi : r.incHi;
-    h += '<div class="r-total"><span class="l">Total<br>'+(inc?'incl.':'excl.')+' BTW</span>'+
+    h += '<div class="r-total"><span class="l">Total '+(inc?'incl.':'excl.')+' BTW</span>'+
          '<span class="v">'+money(mainLo,mainHi,r.ranged)+'</span></div>';
     h += '<div class="r-sub"><span>'+(inc?'Excl.':'Incl.')+' BTW</span><span>'+
          money(othLo,othHi,r.ranged)+'</span></div>';
