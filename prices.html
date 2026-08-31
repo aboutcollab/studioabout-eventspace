@@ -7,11 +7,11 @@
 <meta name="description" content="Every price for the event space, the food, the drinks and the extras. Build your event and see the total.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css">
 </head><body>
 <nav class="nav"><div class="nav-in">
-  <a class="brand" href="index.html">Studio About<span>.</span></a>
+  <a class="brand" href="index.html">Studio About</a>
   <div class="nav-links"><a href="index.html">The space</a><a href="food.html">The food</a><a href="workshops.html">Workshops</a><a href="use-cases.html">What you can host</a><a href="prices.html" aria-current="page">Prices &amp; calculator</a></div>
   <a class="cta" href="prices.html#calc">Price your event</a>
 </div></nav>
@@ -35,7 +35,7 @@
   <div class="calc-grid">
     <div class="panel">
       <fieldset class="fieldset">
-        <div class="legend">1 <b>Who is booking</b></div>
+        <div class="legend"><span class="stepnum">1</span> <b>Who is booking</b></div>
         <div class="seg" id="segAudience">
           <button data-v="business" aria-pressed="true">A business</button>
           <button data-v="private" aria-pressed="false">A private event</button>
@@ -45,7 +45,7 @@
       </fieldset>
 
       <fieldset class="fieldset">
-        <div class="legend">2 <b>When, and for how long</b></div>
+        <div class="legend"><span class="stepnum">2</span> <b>When, and for how long</b></div>
         <div class="row">
           <div class="field"><label for="f_date">Date</label>
             <input type="date" id="f_date"></div>
@@ -63,7 +63,7 @@
       </fieldset>
 
       <fieldset class="fieldset">
-        <div class="legend">3 <b>How many, and how they sit</b></div>
+        <div class="legend"><span class="stepnum">3</span> <b>How many, and how they sit</b></div>
         <div class="row">
           <div class="field" style="flex:0 0 130px"><label for="f_people">People</label>
             <input type="number" id="f_people" min="1" max="120" step="1"></div>
@@ -80,12 +80,12 @@
       </fieldset>
 
       <fieldset class="fieldset">
-        <div class="legend">4 <b>Food</b></div>
+        <div class="legend"><span class="stepnum">4</span> <b>Food</b></div>
         <select id="f_food" aria-label="Food"><option value="">No food</option><option value="lunch_simple">Simple Lunch — €20 pp</option><option value="lunch_buffet_full">Buffet Lunch — €24,50 pp · 12+</option><option value="lunch_plated">Plated Lunch — €27,50 pp · ≤16</option><option value="dinner_2course">Plated Dinner — €30 pp · ≤15</option><option value="dinner_plated">Plated Dinner — €34,50 pp · ≤15</option><option value="dinner_buffet">Buffet Dinner — €29,50 pp · 16+</option><option value="churrasco">Churrasco — €47,50 pp · 15+</option><option value="bites">Brazilian Bites — €7–€12 pp</option><option value="borrel_soft">Borrel — €7,50 pp per hour</option><option value="borrel_alc">Borrel — €10 pp per hour</option><option value="dessert_round">Sweet finish — €4,50 pp</option></select>
       </fieldset>
 
       <fieldset class="fieldset">
-        <div class="legend">5 <b>Drinks</b></div>
+        <div class="legend"><span class="stepnum">5</span> <b>Drinks</b></div>
         <select id="f_drinks" aria-label="Drinks"><option value="">No drinks package</option><option value="p1">Package 1 — €1,75 pp per hour</option><option value="p2">Package 2 — €2,50 pp per hour</option><option value="p3">Package 3 — €6 pp per hour</option><option value="p4">Package 4 — €9 pp per hour</option></select>
         <div class="row" id="serveRow" hidden style="margin-top:12px">
           <div class="field" style="flex:0 0 190px">
@@ -100,7 +100,7 @@
       </fieldset>
 
       <fieldset class="fieldset">
-        <div class="legend">6 <b>Extras</b></div>
+        <div class="legend"><span class="stepnum">6</span> <b>Extras</b></div>
         <div class="checks"><label class="check"><input type="checkbox" class="addon" data-k="sound"><span>Sound set — 2 speakers + wireless mic</span><span class="p">€45</span></label><label class="check"><input type="checkbox" class="addon" data-k="lights"><span>Party light package (incl. black lights)</span><span class="p">€60</span></label><label class="check"><input type="checkbox" class="addon" data-k="djbooth"><span>DJ booth table</span><span class="p">€40</span></label><label class="check"><input type="checkbox" class="addon" data-k="flipchart"><span>Flipchart + markers</span><span class="p">€15</span></label></div>
         <p class="hint">Projector and screen come with the room — we are not charging you
            for something we needed anyway.</p>
@@ -143,24 +143,24 @@
   <div class="grid g2" style="margin-top:28px;align-items:start">
     <div>
       <h3 style="margin-bottom:12px">Lunch</h3>
-      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Simple Lunch</b><br><span style='color:var(--ink-3);font-size:13.5px'>one main delicious dish</span></td><td class='num'>any group</td><td class='price'>€20 pp</td></tr><tr><td><b>Buffet Lunch</b><br><span style='color:var(--ink-3);font-size:13.5px'>main + dessert</span></td><td class='num'>12+</td><td class='price'>€24,50 pp</td></tr><tr><td><b>Plated Lunch</b><br><span style='color:var(--ink-3);font-size:13.5px'>main + dessert, served at table</span></td><td class='num'>≤16</td><td class='price'>€27,50 pp</td></tr></tbody></table></div>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Simple Lunch</b><br><span style='color:var(--ink-45);font-size:13.5px'>one main delicious dish</span></td><td class='num'>any group</td><td class='price'>€20 pp</td></tr><tr><td><b>Buffet Lunch</b><br><span style='color:var(--ink-45);font-size:13.5px'>main + dessert</span></td><td class='num'>12+</td><td class='price'>€24,50 pp</td></tr><tr><td><b>Plated Lunch</b><br><span style='color:var(--ink-45);font-size:13.5px'>main + dessert, served at table</span></td><td class='num'>≤16</td><td class='price'>€27,50 pp</td></tr></tbody></table></div>
       <h3 style="margin:28px 0 12px">Dinner</h3>
-      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Plated Dinner</b><br><span style='color:var(--ink-3);font-size:13.5px'>2 courses, served</span></td><td class='num'>≤15</td><td class='price'>€30 pp</td></tr><tr><td><b>Plated Dinner</b><br><span style='color:var(--ink-3);font-size:13.5px'>3 courses, served</span></td><td class='num'>≤15</td><td class='price'>€34,50 pp</td></tr><tr><td><b>Buffet Dinner</b><br><span style='color:var(--ink-3);font-size:13.5px'>walk-in, chef-served, with dessert</span></td><td class='num'>16+</td><td class='price'>€29,50 pp</td></tr><tr><td><b>Churrasco</b><br><span style='color:var(--ink-3);font-size:13.5px'>full Brazilian BBQ experience + dessert, lunch or dinner</span></td><td class='num'>15+</td><td class='price'>€47,50 pp</td></tr></tbody></table></div>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Plated Dinner</b><br><span style='color:var(--ink-45);font-size:13.5px'>2 courses, served</span></td><td class='num'>≤15</td><td class='price'>€30 pp</td></tr><tr><td><b>Plated Dinner</b><br><span style='color:var(--ink-45);font-size:13.5px'>3 courses, served</span></td><td class='num'>≤15</td><td class='price'>€34,50 pp</td></tr><tr><td><b>Buffet Dinner</b><br><span style='color:var(--ink-45);font-size:13.5px'>walk-in, chef-served, with dessert</span></td><td class='num'>16+</td><td class='price'>€29,50 pp</td></tr><tr><td><b>Churrasco</b><br><span style='color:var(--ink-45);font-size:13.5px'>full Brazilian BBQ experience + dessert, lunch or dinner</span></td><td class='num'>15+</td><td class='price'>€47,50 pp</td></tr></tbody></table></div>
     </div>
     <div>
       <h3 style="margin-bottom:12px">Bites, borrel and something sweet</h3>
-      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Brazilian Bites</b><br><span style='color:var(--ink-3);font-size:13.5px'>tailored to your event, about 6 pieces a person</span></td><td class='num'>any group</td><td class='price'>€7–€12 pp</td></tr><tr><td><b>Borrel</b><br><span style='color:var(--ink-3);font-size:13.5px'>drinks + bites, pp per HOUR, no alcohol</span></td><td class='num'>any group</td><td class='price'>€7,50 pp / hour</td></tr><tr><td><b>Borrel</b><br><span style='color:var(--ink-3);font-size:13.5px'>drinks + bites, pp per HOUR, with alcohol</span></td><td class='num'>any group</td><td class='price'>€10 pp / hour</td></tr><tr><td><b>Sweet finish</b><br><span style='color:var(--ink-3);font-size:13.5px'>a delicious dessert everyone will like</span></td><td class='num'>any group</td><td class='price'>€4,50 pp</td></tr></tbody></table></div>
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Brazilian Bites</b><br><span style='color:var(--ink-45);font-size:13.5px'>tailored to your event, about 6 pieces a person</span></td><td class='num'>any group</td><td class='price'>€7–€12 pp</td></tr><tr><td><b>Borrel</b><br><span style='color:var(--ink-45);font-size:13.5px'>drinks + bites, pp per HOUR, no alcohol</span></td><td class='num'>any group</td><td class='price'>€7,50 pp / hour</td></tr><tr><td><b>Borrel</b><br><span style='color:var(--ink-45);font-size:13.5px'>drinks + bites, pp per HOUR, with alcohol</span></td><td class='num'>any group</td><td class='price'>€10 pp / hour</td></tr><tr><td><b>Sweet finish</b><br><span style='color:var(--ink-45);font-size:13.5px'>a delicious dessert everyone will like</span></td><td class='num'>any group</td><td class='price'>€4,50 pp</td></tr></tbody></table></div>
       <h3 style="margin:28px 0 12px">Drinks</h3>
-      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Package 1</b><br><span style='color:var(--ink-3);font-size:13.5px'>coffee, tea, still + sparkling water</span></td><td class='price'>€1,75 pp / hour</td></tr><tr><td><b>Package 2</b><br><span style='color:var(--ink-3);font-size:13.5px'>+ iced tea, sodas, juices</span></td><td class='price'>€2,50 pp / hour</td></tr><tr><td><b>Package 3</b><br><span style='color:var(--ink-3);font-size:13.5px'>+ wine & beer</span></td><td class='price'>€6 pp / hour</td></tr><tr><td><b>Package 4</b><br><span style='color:var(--ink-3);font-size:13.5px'>+ premium cocktails</span></td><td class='price'>€9 pp / hour</td></tr></tbody></table></div>
-      <p style="font-size:14px;color:var(--onNight-2);margin-top:12px">
+      <div class="tablewrap"><table style="min-width:340px"><tbody><tr><td><b>Package 1</b><br><span style='color:var(--ink-45);font-size:13.5px'>coffee, tea, still + sparkling water</span></td><td class='price'>€1,75 pp / hour</td></tr><tr><td><b>Package 2</b><br><span style='color:var(--ink-45);font-size:13.5px'>+ iced tea, sodas, juices</span></td><td class='price'>€2,50 pp / hour</td></tr><tr><td><b>Package 3</b><br><span style='color:var(--ink-45);font-size:13.5px'>+ wine & beer</span></td><td class='price'>€6 pp / hour</td></tr><tr><td><b>Package 4</b><br><span style='color:var(--ink-45);font-size:13.5px'>+ premium cocktails</span></td><td class='price'>€9 pp / hour</td></tr></tbody></table></div>
+      <p style="font-size:14px;color:var(--ink-60);margin-top:12px">
         Per person, per hour, minimum 2 hours. A borrel is drinks and
         bites together; the packages above are drinks alone.</p>
     </div>
   </div>
-  <p style="font-size:14.5px;color:var(--onNight-2);margin-top:28px;max-width:74ch">
+  <p style="font-size:14.5px;color:var(--ink-60);margin-top:28px;max-width:74ch">
     Buffets run from 15 people. Below that the plated menus are the
     better offer, or a buffet costs €2 per person more.
-    <a href="food.html" style="color:var(--grow)">See what the food actually is →</a></p>
+    <a href="food.html">See what the food actually is →</a></p>
 </div></section>
 
 <section><div class="wrap">
@@ -169,7 +169,7 @@
   <p class="lede" style="margin-bottom:24px">We kept this deliberately short. If we needed it
      in the room anyway, you are not paying for it.</p>
   <div class="tablewrap" style="max-width:560px"><table style="min-width:320px">
-    <tbody><tr><td><b>Sound set — 2 speakers + wireless mic</b></td><td class='price'>€45</td></tr><tr><td><b>Party light package (incl. black lights)</b></td><td class='price'>€60</td></tr><tr><td><b>DJ booth table</b></td><td class='price'>€40</td></tr><tr><td><b>Flipchart + markers</b></td><td class='price'>€15</td></tr><tr><td><b>Projector and screen</b></td><td class='price' style='color:var(--leaf)'>included</td></tr></tbody></table></div>
+    <tbody><tr><td><b>Sound set — 2 speakers + wireless mic</b></td><td class='price'>€45</td></tr><tr><td><b>Party light package (incl. black lights)</b></td><td class='price'>€60</td></tr><tr><td><b>DJ booth table</b></td><td class='price'>€40</td></tr><tr><td><b>Flipchart + markers</b></td><td class='price'>€15</td></tr><tr><td><b>Projector and screen</b></td><td class='price' class='free'>included</td></tr></tbody></table></div>
 </div></section>
 
 
@@ -209,7 +209,7 @@
       <li><a href="index.html">The space</a></li><li><a href="food.html">The food</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="use-cases.html">What you can host</a></li><li><a href="prices.html">Prices &amp; calculator</a></li>
     </ul></div>
   </div>
-  <p class="draft">Working draft, 31 August 2026 —
+  <p class="draft">Working draft, 01 September 2026 —
      built to show the business, not to take bookings yet. Prices are decided and current;
      the room is shown as a drawing because it is still being built. Opening January 2027.</p>
 </div></footer>
