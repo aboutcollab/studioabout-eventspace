@@ -160,10 +160,9 @@
     h += '<div class="r-note">The hours you book are the hours you have the space — '+
          'set-up and clear-out included. Stay longer and the extra time is charged at the '+
          'same hourly rate.<br>Projector and screen come with the room.</div>';
-    h += '<a class="btn" href="#request">Request this date</a>';
+    h += '<a class="btn" href="#request">Book this date</a>';
     out.innerHTML = h;
-    var s = $('#calcSummary');
-    if(s) s.value = plain(r, inc);
+    renderRecap(r, inc);
   }
 
   /* Drinks and the borrel are sold per person per hour. They should be billed for the
@@ -190,7 +189,66 @@
     return m;
   }
 
-  /* a plain-text copy of the receipt, so a request never needs a re-quote */
+  /* The reservation recap. The booking system itself is a Phase-4 build (Helena,
+     1 Sep) — nothing can be booked before January — so this shows the experience end
+     to end with no back end behind it. The footer says so in plain words. */
+  function renderRecap(r, inc){
+    var el = $('#bookRecap'); if(!el) return;
+    if(!r || !r.ok){
+      /* rent.html has the form but no calculator, so point at the one that exists */
+      var here = !!$('#calc');
+      el.innerHTML = '<h3>Your reservation</h3><p class="r-empty">'
+        + (here ? 'Build your event above and it appears here, ready to send.'
+                : 'Price your event first and every line shows up here, ready to send.')
+        + '</p>'
+        + (here ? '' : '<a class="btn" href="prices.html#calc">Price your event</a>');
+      return;
+    }
+    var h = '<h3>Your reservation</h3>';
+    h += '<div class="r-line"><span class="l">When<small>' + (state.date || 'no date yet')
+      + '</small></span><span class="v">' + state.from + '–' + state.to + '</span></div>';
+    h += '<div class="r-line"><span class="l">Who<small>' + state.setup
+      + ' setup · ' + r.band.label + '</small></span><span class="v">' + state.people
+      + ' people</span></div>';
+    r.lines.forEach(function(l){
+      h += '<div class="r-line"><span class="l">' + l.label + '<small>' + l.sub
+        + '</small></span><span class="v">' + money(l.lo, l.hi, l.lo !== l.hi) + '</span></div>';
+    });
+    h += '<div class="r-total"><span class="l">Total ' + (inc ? 'incl.' : 'excl.')
+      + ' BTW</span><span class="v">'
+      + money(inc ? r.incLo : r.exLo, inc ? r.incHi : r.exHi, r.ranged) + '</span></div>';
+    h += '<div class="r-sub"><span>Deposit, refundable</span><span>' + eur(D.borg) + '</span></div>';
+    h += '<div class="r-note">Nothing is charged now. We confirm the date first.</div>';
+    el.innerHTML = h;
+  }
+
+  function initBooking(){
+    var f = $('#bookForm'); if(!f) return;
+    if(!$('#calc')) renderRecap(null, false);   /* no calculator on this page */
+    f.addEventListener('submit', function(ev){
+      ev.preventDefault();
+      var name = ($('#b_name') || {}).value || '';
+      var mail = ($('#b_email') || {}).value || '';
+      if(!name.trim() || !mail.trim()){
+        if(!name.trim() && $('#b_name')) $('#b_name').focus();
+        else if($('#b_email')) $('#b_email').focus();
+        return;
+      }
+      var when = state.date ? state.date + ', ' + state.from + '–' + state.to
+                            : state.from + '–' + state.to;
+      f.innerHTML =
+        '<div class="sent">'
+        + '<div class="sent-mark" aria-hidden="true"></div>'
+        + '<h3>Thank you, ' + name.split(' ')[0].replace(/[<>&]/g, '') + '.</h3>'
+        + '<p>Your reservation for <b>' + when + '</b> is with us. We will come back to you '
+        + 'within 24 hours to confirm the date — nothing is charged before then.</p>'
+        + '<p class="sent-note">We will reply to ' + mail.replace(/[<>&]/g, '') + '.</p>'
+        + '</div>';
+      f.scrollIntoView({block:'center', behavior:'smooth'});
+    });
+  }
+
+  /* a plain-text copy of the receipt, kept for the email route */
   function plain(r, inc){
     var t = 'MY EVENT\n';
     t += 'Date: '+(state.date||'—')+'  '+state.from+'–'+state.to+'  ('+r.h+' h booked)\n';
@@ -295,6 +353,8 @@
   };
 
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', function(){ init(); initSetups(); });
-  } else { init(); initSetups(); }
+    document.addEventListener('DOMContentLoaded', function(){
+      init(); initSetups(); initBooking();
+    });
+  } else { init(); initSetups(); initBooking(); }
 })();

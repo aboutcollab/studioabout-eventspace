@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Het Salon 2 — The Space · Business Model 2 (Design V3.2)</title>
+<style>
+  :root{
+    --bg:#131519; --bg2:#1d2026; --panel:rgba(30,33,39,.94); --line:#3a3f48;
+    --ink:#eceae4; --dim:#9ea3ac; --accent:#e0a458; --accent2:#5ec8e0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+    font-family:'Inter',ui-sans-serif,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  canvas{position:fixed;inset:0;touch-action:none;cursor:grab;display:block}
+  canvas.drag{cursor:grabbing}
+
+  /* ---------- top bar ---------- */
+  .top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:11px 16px;background:linear-gradient(180deg,rgba(19,21,25,.94),rgba(19,21,25,0));
+    pointer-events:none}
+  .brand{pointer-events:auto}
+  .brand .t{font-size:14px;font-weight:650;letter-spacing:-.01em}
+  .brand .t em{font-style:normal;color:var(--accent)}
+  .brand .s{font-size:10.5px;color:var(--dim);letter-spacing:.02em;margin-top:1px}
+  .views{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:4px;
+    box-shadow:0 10px 34px rgba(0,0,0,.5);pointer-events:auto}
+  .views button{background:transparent;border:0;color:var(--dim);cursor:pointer;
+    font:600 11.5px inherit;padding:7px 11px;border-radius:8px;white-space:nowrap;transition:.15s}
+  .views button:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+  .views button.on{background:var(--accent);color:#16181c}
+  .views button.tour{color:var(--accent2)}
+  .views button.tour.on{background:var(--accent2);color:#16181c}
+  .scenes{flex-basis:100%;justify-content:flex-end;margin-top:2px}
+  .scenes .scl{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);
+    align-self:center;margin-left:10px}
+
+  /* ---------- left panel ---------- */
+  .panel{position:fixed;bottom:14px;left:14px;width:278px;max-height:calc(100vh - 96px);
+    overflow-y:auto;background:var(--panel);border:1px solid var(--line);border-radius:13px;
+    padding:14px 15px 11px;z-index:15;box-shadow:0 12px 40px rgba(0,0,0,.55);
+    backdrop-filter:blur(10px)}
+  .panel::-webkit-scrollbar{width:6px}
+  .panel::-webkit-scrollbar-thumb{background:#3f444d;border-radius:3px}
+  .sect{font:700 9.5px inherit;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);
+    margin:0 0 8px}
+  .sect.mt{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
+
+  .facts{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:11.5px;line-height:1.45}
+  .facts .k{color:var(--dim)}
+  .facts .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+  .facts .v i{font-style:normal;color:var(--accent)}
+
+  .layer{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:11.5px;cursor:pointer;
+    user-select:none;color:var(--ink)}
+  .layer input{accent-color:var(--accent);width:13px;height:13px;cursor:pointer;flex:none}
+
+  .legend{display:flex;flex-direction:column;gap:5px}
+  .lg{display:flex;align-items:center;gap:8px;font-size:11px;cursor:pointer;padding:2px 4px;
+    border-radius:6px;transition:.12s}
+  .lg:hover{background:rgba(255,255,255,.06)}
+  .sw{width:11px;height:11px;border-radius:3px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.3)}
+  .lg .m{margin-left:auto;color:var(--dim);font-size:10px;font-variant-numeric:tabular-nums;
+    white-space:nowrap}
+
+  .note{font-size:10px;color:var(--dim);line-height:1.55;margin-top:11px;padding-top:10px;
+    border-top:1px solid var(--line)}
+  .note b{color:#c9cdd4;font-weight:600}
+  .note .warn{color:#e0a458}
+
+  /* ---------- info card ---------- */
+  .info{position:fixed;bottom:14px;right:14px;width:262px;background:var(--panel);
+    border:1px solid var(--line);border-radius:13px;padding:14px 15px;z-index:15;
+    box-shadow:0 12px 40px rgba(0,0,0,.55);backdrop-filter:blur(10px);display:none}
+  .info.on{display:block}
+  .info .hd{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+  .info .nm{font-size:14px;font-weight:650;letter-spacing:-.01em}
+  .info .sz{font-size:11.5px;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .info .tx{font-size:11px;color:var(--dim);line-height:1.6}
+  .info .tx b{color:#d7dbe2;font-weight:600}
+  .info .x{position:absolute;top:10px;right:11px;color:var(--dim);cursor:pointer;font-size:15px;
+    line-height:1;padding:2px 5px;border-radius:5px}
+  .info .x:hover{background:rgba(255,255,255,.08);color:var(--ink)}
+
+  .hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);font-size:10.5px;
+    color:#6f757e;z-index:12;pointer-events:none;white-space:nowrap}
+
+  .toggle{position:fixed;bottom:14px;left:14px;z-index:16;background:var(--panel);color:var(--accent);
+    border:1px solid var(--line);border-radius:9px;font:600 11.5px inherit;padding:9px 12px;
+    display:none;cursor:pointer}
+
+  @media(max-width:820px){
+    .panel{display:none;bottom:58px;width:calc(100vw - 28px);max-height:58vh}
+    .panel.open{display:block}
+    .toggle{display:block}
+    .info{bottom:58px;right:14px;width:calc(100vw - 28px);max-width:262px}
+    .hint{display:none}
+    .top{flex-direction:column;align-items:stretch;gap:8px}
+    .views{margin-left:0;justify-content:flex-start}
+    .views button{padding:6px 9px;font-size:10.5px}
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="top">
+  <div class="brand">
+    <div class="t">Het Salon&nbsp;2 &mdash; the space &middot; <em>Business Model 2</em></div>
+    <div class="s">Peter&rsquo;s Design V3.2, 28 Aug 2026 &middot; an event floor below &middot; four studios and our office on the deck</div>
+  </div>
+  <div class="views" id="views">
+    <button data-v="overview" class="on">Overview</button>
+    <button data-v="rent">The 4 studios</button>
+    <button data-v="event">Event floor</button>
+    <button data-v="under">Under the deck</button>
+    <button data-v="deck">The deck</button>
+    <button data-v="studio">Inside a studio</button>
+    <button data-v="terrace">Kitchen terrace</button>
+    <button data-v="plan">Plan</button>
+    <button data-v="tour" class="tour" id="tourBtn">&#9658; Tour</button>
+  </div>
+  <div class="views scenes" id="scenes">
+    <span class="scl">Ground floor:</span>
+    <button data-s="empty">Empty</button>
+    <button data-s="dinner">Tables</button>
+    <button data-s="theater">Talk</button>
+    <span class="scl">Deck:</span>
+    <button data-m="bare">Floor map</button>
+    <button data-m="walls">+ curtains</button>
+    <button data-m="furn">+ furniture &amp; people</button>
+  </div>
+</div>
+
+<button class="toggle" id="tg">&#9776;&nbsp; Info</button>
+
+<div class="panel" id="panel">
+  <div class="sect">The hall</div>
+  <div class="facts">
+    <div class="k">Floor area</div><div class="v">240 m&sup2;</div>
+    <div class="k">Height</div><div class="v">8.0 m</div>
+    <div class="k">Clear under the deck</div><div class="v">4.00 m</div>
+    <div class="k">Deck floor at</div><div class="v">4.28 m <i>*</i></div>
+    <div class="k">Headroom on the deck</div><div class="v">~3.7 m <i>*</i></div>
+    <div class="k">The deck</div><div class="v">6 &times; 20 = 120 m&sup2;</div>
+    <div class="k">Curtains</div><div class="v">two layers &middot; 3.0 m</div>
+    <div class="k">Event floor, drawn</div><div class="v" id="fEvent">&nbsp;</div>
+    <div class="k">Event floor, priced</div><div class="v">150 m&sup2;</div>
+  </div>
+
+  <div class="sect mt">Studios to rent &mdash; 80 m&sup2;</div>
+  <div class="legend" id="legend"></div>
+
+  <div class="sect mt">Ours &mdash; everything else</div>
+  <div class="legend" id="legend2"></div>
+
+  <div class="sect mt">Show</div>
+  <label class="layer"><input type="checkbox" data-layer="ground" checked>Ground floor</label>
+  <label class="layer"><input type="checkbox" data-layer="deck" checked>Deck</label>
+  <label class="layer"><input type="checkbox" data-layer="labels" checked>Labels</label>
+  <label class="layer"><input type="checkbox" data-layer="dims" checked>Dimensions</label>
+
+  <div class="note">
+    <b>What this is.</b> Peter&rsquo;s Design V3.2 drawn to scale off his 1&nbsp;m grid, on the
+    business-model-2 decisions of 28&nbsp;Aug: the whole ground floor is <b>our event floor</b>,
+    the deck carries <b>four 4&nbsp;&times;&nbsp;5&nbsp;m studios</b> behind 3&nbsp;m curtains plus our
+    <b>4&nbsp;&times;&nbsp;6&nbsp;m office</b>, and the Wood&nbsp;&amp;&nbsp;Build Area is Peter&rsquo;s own.
+    <b>Two layers of curtain:</b> each studio has its own, and a second run hangs just inside the rail
+    along the whole open edge &mdash; walkway, office, kitchen &mdash; so that closed (tick <i>Event
+    mode</i>), the upstairs disappears from an event and tenants come and go unseen; the rail and the
+    plants stay on the event side. Nothing is shared and nothing is lockable &mdash; a curtain is a curtain.<br><br>
+    <span class="warn">*</span> <b>Peter writes 4&nbsp;m below and 4&nbsp;m above,</b> which leaves nothing for
+    the floor itself. Drawn here: 4.00&nbsp;m clear, a 0.28&nbsp;m steel floor <b>(assumed, not quoted)</b>,
+    ~3.7&nbsp;m above. The deck is <b>steel because V3.2 shows a steel example</b>; nothing is chosen.<br><br>
+    <b>The stair</b> is drawn at a legal pitch &mdash; 23 risers of 186&nbsp;mm, 4.84&nbsp;m of run &mdash;
+    where Peter&rsquo;s drawing gives it ~3.5&nbsp;m; his example render has <b>two</b> stairs, his plan one.
+    Divider-wall height, doors and every piece of furniture are illustrative, not in the brief.
+    <b>No bar and no projection wall</b> appear in V3.2, so none are drawn.
+  </div>
+</div>
+
+<div class="info" id="info">
+  <div class="x" id="infoX">&times;</div>
+  <div class="hd"><span class="sw" id="iSw"></span><span class="nm" id="iNm"></span></div>
+  <div class="sz" id="iSz"></div>
+  <div class="tx" id="iTx"></div>
+</div>
+
+<div class="hint">drag to turn &middot; scroll to zoom &middot; click anything coloured</div>
+
+<script>
+"use strict";
+/* ===========================================================================
+   HET SALON 2 — BUSINESS MODEL 2 — 3D of the space as Peter drew it in Design V3.2.
+   Source: business-models/model2/data/About-Collab-V3.2-28aug2026.pdf, pp. 8–13
+   (Peter → Helena, 28 Aug 2026 21:38), read against model2/overrides.py.
+   Geometry read off Peter's 1 m grid (±0.2 m) and snapped where he snapped.
+   This is a PARALLEL model: the BM1 3D (03-the-numbers/vide/the-space-3d.html) is
+   untouched and the two are meant to be opened side by side.
+   Renderer: same dependency-free engine as BM1 — face-level painter's algorithm +
+   near-plane clipping + lambert/hemisphere light — extended with polygon prisms
+   (the diagonal closets, the terrace) and free-direction rails.
+   =========================================================================== */
+
+const cv=document.getElementById('c'), ctx=cv.getContext('2d');
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+  cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+
+/* --------------------------------------------------------------------------
+   1. DIMENSIONS  (metres; x = 0..20 left→right, z = 0..12 back wall→door wall)
+   -------------------------------------------------------------------------- */
+const RW=20, RD=12, RH=8.0;          // the hall. Height: Helena, 16 Aug 2026 — 8 m throughout.
+const UNDER=4.00;                    // clear height under the deck — Peter V3.2 ("4 meters high
+                                     // untill the second floor", written 5×); Helena 28 Aug:
+                                     // "this idea needs four meters, so that's his height".
+const STRUCT=0.28;                   // ASSUMED for the drawing only — the depth of a steel
+                                     // entresol floor (beam + 38 mm panel). overrides.py carries
+                                     // it as FILL IN; whatever it is comes off the headroom above.
+const DECK_TOP=UNDER+STRUCT;         // 4.28 — the walking level on the deck
+const ABOVE=RH-DECK_TOP;             // ~3.72 m of air over the deck
+const CURTAIN_H=3.0;                 // Peter: "3 meters high, some space above"
+const DECK_D=6;                      // Peter: "entresol floor 6 x 20 meter"
+const OX=-RW/2, OZ=-RD/2;            // model centred on origin
+
+/* the stair: one straight flight along the left wall, 1 m wide, climbing from the front
+   (z high) to the deck's left end at z = 6. Peter draws ~3.5 m of run for a 4 m rise, which
+   is steeper than the Bbl allows. Drawn legal instead: 23 risers × 186 mm, 22 goings × 220 mm. */
+const RISERS=23, GOING=0.22, STAIR_RUN=(RISERS-1)*GOING;   // 4.84 m
+const S_FOOT=DECK_D+STAIR_RUN;                             // z = 10.84 — 1.16 m from the door wall
+
+/* Peter's one diagonal: it bounds the closet under the deck AND the Wood & Build Area's
+   front part / the kitchen terrace above it — one straight line from (7.5, 0.7) to (2.3, 9.5). */
+const DA=[7.5,0.7], DB=[2.3,9.5];
+const xAt=z=>DA[0]+(DB[0]-DA[0])*(z-DA[1])/(DB[1]-DA[1]);
+xAt.inv=x=>DA[1]+(DB[1]-DA[1])*(x-DA[0])/(DB[0]-DA[0]);
+const XD6=+xAt(6).toFixed(3);        // 4.368 — where the diagonal crosses the deck edge
+const WOOD_W=4.0;                    // Helena, 28 Aug (second review of the 3D): "the sawing area is a
+                                     // metre wider… until the stairs, eight or nine metres" — was 3 m
+const ZD4=+xAt.inv(WOOD_W).toFixed(2); // 6.62 — where the diagonal meets the wood area's straight wall
+
+/* --------------------------------------------------------------------------
+   2. LAYOUT  — plan polygons [[x,z],...]. Colours are Peter's own from pp. 10–13.
+   -------------------------------------------------------------------------- */
+const C={s1:'#62C3F0', s2:'#F2A98A', s3:'#5FCC5F', s4:'#E6A3E3', ours:'#FFC000',
+         walk:'#D9A52B', wood:'#1F5F82', closet:'#A0308F', wallcl:'#E07BCF',
+         floorA:'#B9B3A6', floorB:'#A39D91', divider:'#8E3A80'};
+
+const R=(x0,z0,x1,z1)=>[[x0,z0],[x1,z0],[x1,z1],[x0,z1]];
+
+// tag: rent = a tenant studio · ours = About Collab / Studio About · walk = the route
+const GROUND=[
+  {id:'front', pts:[[WOOD_W,ZD4],[XD6,6],[20,6],[20,12],[0,12],[0,S_FOOT],[1.5,S_FOOT],[1.5,10],[WOOD_W,10]],
+   c:C.floorA, tag:'ours', name:'Event floor &mdash; the front strip', h:8,
+   tx:'The double-height half of the event floor: wall to wall under the full 8 m, and both doors from Het Salon open onto it. It is cut into smaller rooms with rolling walls and curtains from the storage closets &mdash; V3.2 draws two 3.4 m walls (not rendered here, by choice). The <b>screen hangs on this wall</b>, above the doors. <b>Priced as part of a 150 m&sup2; floor</b>; what the drawing gives beyond that is ours to use, not floor we sell.'},
+  {id:'bay', pts:[[+xAt(0.8).toFixed(3),0.8],[16.9,0.8],[20,6],[XD6,6]],
+   c:C.floorB, tag:'ours', name:'Event floor &mdash; under the deck', h:4,
+   tx:'The other half of the event floor, with a <b>4 m ceiling</b>: between the closet and the storage, the wall closet along the back. The natural room for a small booking &mdash; close it with one rolling wall and it is the &ldquo;up to 50 m&sup2;&rdquo; band, more or less. No daylight anywhere in this hall; the garden next door is the daylight.'},
+  {id:'wood', pts:R(0,0,WOOD_W,6), c:C.wood, tag:'ours', name:'Wood &amp; Build Area', h:4,
+   tx:'<b>Peter&rsquo;s own machine room</b> &mdash; in business model 2 the woodwork is not an offer and nothing here is shared. <b>4 m wide with a straight wall, 10 m from the back wall to the stair</b>; the front part beside the 1.5 m stair is the <b>2.5 m entrance</b> (Peter, 29 Aug). Walls 4 m high up to the deck; the 2.5 &times; 4 m kitchen terrace sits on its roof and the stair runs along its side, so the whole left end reads as one block. The door is not in the brief &mdash; drawn on the event-floor side.'},
+  {id:'wood2', pts:R(1.5,6,WOOD_W,10), c:C.wood, tag:'ours', name:'', tx:''},
+  {id:'closet', pts:[[WOOD_W,0],[7.5,0],[7.5,0.7],[WOOD_W,ZD4]], c:C.closet, tag:'ours',
+   name:'Closet', h:4,
+   tx:'A built volume, <b>4 m high up to the deck</b> &mdash; not floor, and <b>the same size as the storage opposite</b> (Helena, second review). Its diagonal face is the long wall of the under-deck bay; its tip pokes 0.6 m past the deck line, as on Peter&rsquo;s p. 10. In BM1 this corner held the projection wall; V3.2 says nothing about projection, so nothing is drawn.'},
+  {id:'wallcl', pts:R(7.5,0,16.9,0.8), c:C.wallcl, tag:'ours', name:'Wall closet', h:4,
+   tx:'Along the back wall, 0.8 m deep and 4 m high to the deck &mdash; the workshop&rsquo;s storage. Peter counted it inside the event floor; this drawing does not.'},
+  {id:'storage', pts:[[16.9,0],[20,0],[20,6],[16.9,0.8]], c:C.closet, tag:'ours', name:'Storage', h:4,
+   tx:'The right-hand triangle, 4 m high to the deck. With the closet and the wall closet it is why the open floor is ~170 m&sup2; and not 240.'}
+];
+
+const DECKZ=[
+  {id:'s1', pts:R(0,0,4,5),   c:C.s1, tag:'rent', name:'Studio 1', size:'4 &times; 5 m &middot; 20 m&sup2;',
+   tx:'First on the deck, at the head of the stair and next to the kitchen terrace. Curtain on the front and the right; the left and the back are the hall&rsquo;s own walls. <b>Nothing is lockable.</b> Below you is the event floor &mdash; working opposite hours is the point of this deck.'},
+  {id:'s2', pts:R(4,0,8,5),   c:C.s2, tag:'rent', name:'Studio 2', size:'4 &times; 5 m &middot; 20 m&sup2;',
+   tx:'Second along the walkway. Curtains front, left and right, 3 m high with the air open above them &mdash; you hear your neighbours, and the floor below when something is on.'},
+  {id:'s3', pts:R(8,0,12,5),  c:C.s3, tag:'rent', name:'Studio 3', size:'4 &times; 5 m &middot; 20 m&sup2;',
+   tx:'Third along the walkway, above the middle of the under-deck bay. Same 20 m&sup2;, same curtains, same ~3.7 m of air overhead.'},
+  {id:'s4', pts:R(12,0,16,5), c:C.s4, tag:'rent', name:'Studio 4', size:'4 &times; 5 m &middot; 20 m&sup2;',
+   tx:'Last of the four, beside our office &mdash; the walkway ends here. The quietest end of the deck: nobody passes it.'},
+  {id:'office', pts:R(16,0,20,6), c:C.ours, tag:'ours', name:'About Collab &amp; Studio About',
+   lbl:'Our office', size:'4 &times; 6 m &middot; 24 m&sup2;',
+   tx:'Our own office, the full 6 m depth at the end of the deck. No corridor passes it (the walkway stops at Studio 4), so it is the biggest and the most private room upstairs. Room for four desks. Curtain towards Studio 4; its front is the outer run inside the rail.'},
+  {id:'walk', pts:R(0,5,16,6), c:C.walk, tag:'walk', name:'Looproute', size:'1 &times; 16 m &middot; 16 m&sup2;',
+   tx:'The walkway in front of Studios 1&ndash;4, from the stair head to the office door. <b>&ldquo;Rails of wood for safety, with plants hanging in front&rdquo;</b> &mdash; Peter, V3.2. <b>Curtain on both sides:</b> the studios&rsquo; own on one side, the outer run just inside the rail on the other &mdash; closed, it is a corridor nobody on the event floor can see into.'},
+  {id:'terrace', pts:R(1.5,6,WOOD_W,10), c:C.ours, tag:'ours',
+   name:'Studio Kitchen &amp; lunch area', size:'2.5 &times; 4 m &middot; 10 m&sup2;',
+   tx:'New in V3.2: drawn here on the <b>roof of the Wood &amp; Build Area</b>, level with the deck &mdash; Peter labels that roof &ldquo;4 meters high, same as second floor&rdquo; and runs the safety rail along it; his L-shaped bar on the two open edges is read as the counter. <b>A kitchen needs water and a drain, and nothing about water is known yet</b> (before-we-sign, group D). &#9888; <b>A second reading exists</b> &mdash; the kitchen at the <i>foot</i> of the stair, on the ground. One sentence from Peter settles it.'}
+];
+
+const DIVIDERS=[ [11.3,5.0,14.7,5.0], [9.2,8.0,12.6,8.0] ];   // Peter, p. 10 — two "divider walls on weels", ~3.4 m each
+const DIVIDER_H=2.4;                                            // not in the brief — drawn 2.4 m
+
+// steel columns — an indicative supplier's grid (Multi Profiel example, p. 12), NOT a quoted
+// structure. Two rows: against the back wall and on the deck's front edge, every 4 m — which
+// puts a column on every curtain line.
+const COLS=[];
+[0.15,4,8,12,16,19.85].forEach(x=>[0.15,5.85].forEach(z=>COLS.push([x,z])));
+
+// the two doors into Het Salon, on the front wall (Peter p. 8; same as the survey drawing)
+const DOORS=[[1.2,2.9],[12.0,13.7]];
+
+/* --------------------------------------------------------------------------
+   3. MATERIALS
+   -------------------------------------------------------------------------- */
+const M={
+  concrete:'#918f89', panel:'#ebe8e1', panelSide:'#d9d5cd', ceiling:'#efece5',
+  timber:'#c08a4c', timberDk:'#9d6f3c',
+  deckTop:'#d6b177', steel:'#5f6873', steelDk:'#4a525c',
+  glass:'rgba(200,230,240,.25)',
+  bench:'#9c7448', benchTop:'#c69a63', mach:'#4e565f', machAcc:'#d8663f',
+  /* the zone walls are a big SURFACE, so they carry a muted purple; pure Purple Rain
+     #6400cc is kept for the accents that should shout — the bar, the canvases, the
+     grow light. A whole wall of the brand colour reads as neon, not as brand. */
+  fabric:'#4a5a68', plant:'#5d8a52', plantDk:'#3f6b3a', planter:'#6e5a45', box:'#a89478', dark:'#33383f',
+  light:'#fff7e0', closetWall:'#5c3f96', wallclWall:'#8a72c0', woodWall:'#d7d3ca',
+  kitchen:'#e9e4d8', kitchenTop:'#b9b4aa', divider:'#4d00a0'
+};
+
+/* --------------------------------------------------------------------------
+   4. GEOMETRY BUILDER  — everything becomes a list of shaded polygons
+   -------------------------------------------------------------------------- */
+const faces=[];           // {p:[v..], n:[x,y,z], c:'#rgb', layer, two, pick, alpha, bias}
+const people=[];          // {x,z,y,h,c}
+const labels=[];          // {x,y,z,t,s,c,tag,deckOnly,underDeck}
+const dims=[];            // {a:[x,y,z], b:[x,y,z], t}
+
+const LIGHT=norm([-0.42,0.83,0.36]);
+function norm(v){const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];}
+function sub(a,b){return[a[0]-b[0],a[1]-b[1],a[2]-b[2]];}
+function cross(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+
+function addFace(pts,n,c,layer,opt){
+  opt=opt||{};
+  /* bias = forced draw order, added to depth before sorting. The concrete floor and the
+     hall walls are single quads far bigger than anything else, so centroid depth alone
+     paints them OVER the zone colours near the edges. They get pushed to the back. */
+  faces.push({p:pts,n:n,c:c,layer:layer,two:!!opt.two,pick:opt.pick||null,
+              alpha:opt.alpha||1,tag:opt.tag||null,glow:!!opt.glow,glowC:opt.glowC||null,bias:opt.bias||0});
+}
+
+/* axis-aligned box, outward normals. x,z in plan metres; y in metres */
+function box(x0,y0,z0,x1,y1,z1,c,layer,opt){
+  opt=opt||{};
+  const X0=x0+OX,X1=x1+OX,Z0=z0+OZ,Z1=z1+OZ;
+  const top=opt.top||c, side=opt.side||c;
+  const V=(x,y,z)=>[x,y,z];
+  addFace([V(X0,y1,Z0),V(X1,y1,Z0),V(X1,y1,Z1),V(X0,y1,Z1)],[0,1,0],top,layer,opt);   // top
+  addFace([V(X0,y0,Z1),V(X1,y0,Z1),V(X1,y0,Z0),V(X0,y0,Z0)],[0,-1,0],shadeHex(side,.72),layer,opt); // bottom
+  addFace([V(X0,y0,Z0),V(X1,y0,Z0),V(X1,y1,Z0),V(X0,y1,Z0)],[0,0,-1],side,layer,opt); // north
+  addFace([V(X1,y0,Z1),V(X0,y0,Z1),V(X0,y1,Z1),V(X1,y1,Z1)],[0,0,1],side,layer,opt);  // south
+  addFace([V(X0,y0,Z1),V(X0,y0,Z0),V(X0,y1,Z0),V(X0,y1,Z1)],[-1,0,0],side,layer,opt); // west
+  addFace([V(X1,y0,Z0),V(X1,y0,Z1),V(X1,y1,Z1),V(X1,y1,Z0)],[1,0,0],side,layer,opt);  // east
+}
+
+/* a vertical slab between two arbitrary plan points — walls and rails on the diagonal */
+function slab(ax,az,bx,bz,y0,y1,t,color,layer,opt){
+  opt=opt||{};
+  const dx=bx-ax, dz=bz-az, L=Math.hypot(dx,dz);
+  const ux=dx/L, uz=dz/L, nx=-uz*t/2, nz=ux*t/2;
+  const P=(px,pz,y)=>[px+OX,y,pz+OZ];
+  const A=[ax+nx,az+nz],B=[bx+nx,bz+nz],Cc=[bx-nx,bz-nz],D=[ax-nx,az-nz];
+  const nIn=[-uz,0,ux], nOut=[uz,0,-ux];
+  addFace([P(A[0],A[1],y0),P(B[0],B[1],y0),P(B[0],B[1],y1),P(A[0],A[1],y1)],nIn,color,layer,opt);
+  addFace([P(Cc[0],Cc[1],y0),P(D[0],D[1],y0),P(D[0],D[1],y1),P(Cc[0],Cc[1],y1)],nOut,opt.back||color,layer,opt);
+  addFace([P(A[0],A[1],y1),P(B[0],B[1],y1),P(Cc[0],Cc[1],y1),P(D[0],D[1],y1)],[0,1,0],opt.top||color,layer,opt);
+  addFace([P(D[0],D[1],y0),P(A[0],A[1],y0),P(A[0],A[1],y1),P(D[0],D[1],y1)],[-ux,0,-uz],opt.back||color,layer,opt);
+  addFace([P(B[0],B[1],y0),P(Cc[0],Cc[1],y0),P(Cc[0],Cc[1],y1),P(B[0],B[1],y1)],[ux,0,uz],opt.back||color,layer,opt);
+}
+
+/* a prism on any convex plan polygon — the diagonal closets, the storage triangle, the terrace */
+function prism(pts,y0,y1,c,layer,opt){
+  opt=opt||{};
+  const n=pts.length; let A=0,cx=0,cz=0;
+  for(let i=0;i<n;i++){const a=pts[i],b=pts[(i+1)%n];const w=a[0]*b[1]-b[0]*a[1];A+=w;cx+=(a[0]+b[0])*w;cz+=(a[1]+b[1])*w;}
+  A/=2; cx/=(6*A); cz/=(6*A);
+  const P=(x,z,y)=>[x+OX,y,z+OZ];
+  addFace(pts.map(p=>P(p[0],p[1],y1)),[0,1,0],opt.top||c,layer,opt);
+  addFace(pts.slice().reverse().map(p=>P(p[0],p[1],y0)),[0,-1,0],shadeHex(opt.side||c,.72),layer,opt);
+  for(let i=0;i<n;i++){
+    const a=pts[i],b=pts[(i+1)%n];
+    const dx=b[0]-a[0],dz=b[1]-a[1],L=Math.hypot(dx,dz)||1;
+    let nx=dz/L,nz=-dx/L;
+    if(nx*((a[0]+b[0])/2-cx)+nz*((a[1]+b[1])/2-cz)<0){nx=-nx;nz=-nz;}
+    addFace([P(a[0],a[1],y0),P(b[0],b[1],y0),P(b[0],b[1],y1),P(a[0],a[1],y1)],[nx,0,nz],opt.side||c,layer,opt);
+  }
+}
+
+/* horizontal polygon at height y, used for floor tints (double sided, pickable) */
+function polyPlate(pts,y,c,layer,opt){
+  opt=Object.assign({two:true},opt||{});
+  addFace(pts.map(p=>[p[0]+OX,y,p[1]+OZ]),[0,1,0],c,layer,opt);
+}
+function plate(x0,z0,x1,z1,y,c,layer,opt){polyPlate(R(x0,z0,x1,z1),y,c,layer,opt);}
+
+function area(pts){let A=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];A+=a[0]*b[1]-b[0]*a[1];}return Math.abs(A)/2;}
+function centroid(pts){let A=0,cx=0,cz=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];const w=a[0]*b[1]-b[0]*a[1];A+=w;cx+=(a[0]+b[0])*w;cz+=(a[1]+b[1])*w;}A/=2;return[cx/(6*A),cz/(6*A)];}
+
+function shadeHex(hex,f){
+  const n=parseInt(hex.slice(1),16);
+  const r=Math.min(255,((n>>16)&255)*f|0), g=Math.min(255,((n>>8)&255)*f|0), b=Math.min(255,(n&255)*f|0);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* ---------- 4a. the shell: inward-facing box, so near walls self-hide ---------- */
+(function shell(){
+  const X0=OX,X1=RW+OX,Z0=OZ,Z1=RD+OZ;
+  addFace([[X0,0,Z0],[X1,0,Z0],[X1,0,Z1],[X0,0,Z1]],[0,1,0],M.concrete,'shellfloor',{two:true,bias:1000});
+  const A={alpha:0.40,bias:900};
+  addFace([[X0,0,Z0],[X1,0,Z0],[X1,RH,Z0],[X0,RH,Z0]],[0,0,1],M.panel,'shell',A);
+  addFace([[X1,0,Z1],[X0,0,Z1],[X0,RH,Z1],[X1,RH,Z1]],[0,0,-1],M.panel,'shell',A);
+  addFace([[X0,0,Z1],[X0,0,Z0],[X0,RH,Z0],[X0,RH,Z1]],[1,0,0],M.panelSide,'shell',A);
+  addFace([[X1,0,Z0],[X1,0,Z1],[X1,RH,Z1],[X1,RH,Z0]],[-1,0,0],M.panelSide,'shell',A);
+  addFace([[X0,RH,Z1],[X1,RH,Z1],[X1,RH,Z0],[X0,RH,Z0]],[0,-1,0],M.ceiling,'shell',{alpha:0.22,bias:900});
+
+  // a solid dado to 2.2 m — enough wall to feel enclosed, low enough to see over
+  const D={alpha:0.80,bias:880};
+  addFace([[X0,0,Z0+0.02],[X1,0,Z0+0.02],[X1,2.2,Z0+0.02],[X0,2.2,Z0+0.02]],[0,0,1],M.panel,'shell',D);
+  addFace([[X1,0,Z1-0.02],[X0,0,Z1-0.02],[X0,2.2,Z1-0.02],[X1,2.2,Z1-0.02]],[0,0,-1],M.panel,'shell',D);
+  addFace([[X0+0.02,0,Z1],[X0+0.02,0,Z0],[X0+0.02,2.2,Z0],[X0+0.02,2.2,Z1]],[1,0,0],M.panelSide,'shell',D);
+  addFace([[X1-0.02,0,Z0],[X1-0.02,0,Z1],[X1-0.02,2.2,Z1],[X1-0.02,2.2,Z0]],[-1,0,0],M.panelSide,'shell',D);
+  for(let x=1.2;x<RW;x+=1.2){                       // panel joints — the real sandwich panelling
+    addFace([[x+OX-0.02,0,Z0+0.04],[x+OX+0.02,0,Z0+0.04],[x+OX+0.02,2.2,Z0+0.04],[x+OX-0.02,2.2,Z0+0.04]],
+            [0,0,1],M.panelSide,'shell',{alpha:0.8,bias:870});
+  }
+  DOORS.forEach(d=>{                                 // the two doors into Het Salon
+    addFace([[d[1]+OX,0,Z1-0.01],[d[0]+OX,0,Z1-0.01],[d[0]+OX,2.4,Z1-0.01],[d[1]+OX,2.4,Z1-0.01]],
+            [0,0,-1],'#6d6a64','shell');
+  });
+  // the two wall ventilators (settled 15 Aug: in + out, through the wall to Het Salon) — a
+  // building decision, so it carries over unchanged
+  [6.4,7.6].forEach(x=>box(x-0.2,5.6,RD-0.16,x+0.2,6.0,RD-0.02,M.steel,'shell'));
+  // ceiling strip lights
+  for(let z=1.5;z<RD;z+=3) box(1.0,RH-0.18,z-0.07,RW-1.0,RH-0.10,z+0.07,M.light,'shell',{glow:true});
+})();
+
+/* ---------- 4b. ground-floor tints ---------- */
+GROUND.forEach(g=>{
+  /* the wood-room floor tint lives on its own layer 'woodzone' (round 9), so the wood-room
+     mini can colour ONLY the zagerij floor while the other ground tints stay off */
+  polyPlate(g.pts,0.012,g.c,(g.id==='wood'||g.id==='wood2')?'woodzone':'zones',
+            {pick:{lvl:'ground',z:g},tag:g.tag,bias:800});
+});
+/* the deck's shadow on the ground — reads as mass, and shows what sits under it */
+plate(0,0,RW,DECK_D,0.024,'#15171b','deck',{alpha:0.30,bias:700});
+
+/* ---------- 4c. the built volumes under the deck — closets 4 m high ---------- */
+(function builtVolumes(){
+  const cl=GROUND.find(g=>g.id==='closet'), st=GROUND.find(g=>g.id==='storage'), wc=GROUND.find(g=>g.id==='wallcl');
+  prism(cl.pts,0,UNDER-0.02,M.closetWall,'zones',{top:C.closet,pick:{lvl:'ground',z:cl},tag:'ours'});
+  prism(st.pts,0,UNDER-0.02,M.closetWall,'zones',{top:C.closet,pick:{lvl:'ground',z:st},tag:'ours'});
+  prism(wc.pts,0,UNDER-0.02,M.wallclWall,'zones',{top:C.wallcl,pick:{lvl:'ground',z:wc},tag:'ours'});
+  // closet door lines on the wall closet's face (0.9 m bays)
+  for(let x=8.2;x<16.9;x+=1.1) box(x-0.02,0.1,0.80,x+0.02,UNDER-0.4,0.83,'#a04f92','zones');
+})();
+
+/* ---------- 4d. the Wood & Build Area — Peter's own, walls 4 m to the deck ----------
+   Under the deck it is x 0–3 and its east wall IS the closet's west face. In front of the
+   deck it widens to the diagonal, with the stair enclosed along its left side (x 0–1) and the
+   kitchen terrace on its roof. Drawn translucent so the machines inside stay readable —
+   it is a solid wall in reality, not glazing. */
+(function woodArea(){
+  /* layer 'walls': on everywhere except the plan view, where a 4 m translucent wall seen
+     from almost straight above smears into a ghost over Peter's coloured areas.
+     The east wall is straight at x = 4 (Helena, second review): under the deck it IS the
+     closet's west face, so only the part in front of the deck line is drawn here. */
+  /* stair 1.5 m wide, entrance strip 2.5 m, kitchen roof 2.5 × 4 m — Peter, 29 Aug */
+  const WC=M.woodWall, WA={alpha:0.55,top:'#c4c0b7'}, WH=UNDER, LW='walls';
+  slab(1.5,6, 1.5,10, 0,WH, 0.12, WC,LW,WA);                 // west wall, beside the 1.5 m stair
+  slab(1.5,10, WOOD_W,10, 0,WH, 0.12, WC,LW,WA);             // front wall
+  slab(WOOD_W,ZD4, WOOD_W,7.4, 0,WH, 0.12, WC,LW,WA);        // east wall, north of the door
+  slab(WOOD_W,8.4, WOOD_W,10, 0,WH, 0.12, WC,LW,WA);         // east wall, south of the door
+  slab(WOOD_W,7.4, WOOD_W,8.4, 2.1,WH, 0.12, WC,LW,WA);      // panel over the door
+  slab(WOOD_W,7.36, WOOD_W,7.44, 0,2.1, 0.14, M.steel,LW);   // door reveals
+  slab(WOOD_W,8.36, WOOD_W,8.44, 0,2.1, 0.14, M.steel,LW);
+})();
+
+/* ---------- 4e. steel structure + the deck slab ---------- */
+COLS.forEach(p=>{
+  box(p[0]-0.06,0,p[1]-0.06,p[0]+0.06,UNDER,p[1]+0.06,M.steel,'deck',{top:M.steelDk});
+  box(p[0]-0.14,0,p[1]-0.14,p[0]+0.14,0.015,p[1]+0.14,M.steelDk,'deck');
+});
+/* the floor: one slab per deck zone, its TOP painted in the zone's own colour — the studio
+   colours are part of the floor itself, so they can never be painted over from any angle
+   (Peter, 29 Aug: "de vloeren van de studios moeten verschillende kleuren hebben — altijd
+   zichtbaar"). The zones tile the deck exactly, so together they ARE the slab. */
+DECKZ.filter(d=>d.id!=='terrace').forEach(d=>{
+  const xs=d.pts.map(p=>p[0]), zs=d.pts.map(p=>p[1]);
+  box(Math.min(...xs),UNDER,Math.min(...zs),Math.max(...xs),DECK_TOP,Math.max(...zs),
+      M.steel,'deck',{top:d.c,side:M.steel,pick:{lvl:'deck',z:d},tag:d.tag});
+});
+// the front edge beam, a little deeper, so the edge reads as steel — from the wood-room
+// wall onward only: across the terrace junction it read as floor jutting over the kitchen
+// (Helena, 30 Aug: "de vloer gaat tot het midden van de keuken — dat kan niet")
+box(WOOD_W,UNDER-0.02,DECK_D-0.18,RW,DECK_TOP-0.04,DECK_D+0.02,M.steelDk,'deck');
+// the terrace floor — the roof of the wood area's front part, its top in "ours" yellow
+prism(DECKZ.find(d=>d.id==='terrace').pts,UNDER,DECK_TOP,M.steel,'deck',
+      {top:C.ours,pick:{lvl:'deck',z:DECKZ.find(d=>d.id==='terrace')},tag:'ours'});
+
+/* ---------- 4f. timber rails with plants hanging in front (Peter, V3.2) ----------
+   [ax,az,bx,bz, ox,oz] — o = the outward side, where the planters hang */
+const RAILS=[
+  [WOOD_W,6, 20,6,  0,1]        // the deck's front edge, from the terrace to the office wall
+];
+/* the terrace enclosure is ONE BIG BAR (Peter, 29 Aug): solid down to the floor — nobody
+   looks under or through it, you stand behind it unseen — counter height, one long worktop
+   you lean on and serve over, facing the event floor. Fridges, the sink and the kitchen
+   things live underneath. It replaces the rail + planters on all three open edges.
+   Layer 'deck': it is the enclosure itself, structure, in every dressing state. */
+const TERRACE_BAR=[
+  [1.5,10, WOOD_W,10, 0,1],     // front
+  [WOOD_W,6, WOOD_W,10, 1,0],   // the side over the event floor
+  [1.5,6, 1.5,10, -1,0]         // the side over the stair
+];
+function terraceBar(ax,az,bx,bz,ox,oz){
+  const y=DECK_TOP, H=1.05;
+  const on=Math.hypot(ox,oz)||1; ox/=on; oz/=on;
+  slab(ax,az,bx,bz, y,y+H, 0.14, M.woodWall,'deck',{top:M.timberDk});          // the closed body
+  slab(ax-ox*0.10,az-oz*0.10, bx-ox*0.10,bz-oz*0.10, y+H,y+H+0.07, 0.55,
+       M.benchTop,'deck',{top:M.timberDk});                                    // the worktop, overhanging inward
+}
+TERRACE_BAR.forEach(b=>terraceBar(...b));
+function rail(ax,az,bx,bz,ox,oz){
+  const dx=bx-ax,dz=bz-az,L=Math.hypot(dx,dz),ux=dx/L,uz=dz/L,y=DECK_TOP;
+  const on=Math.hypot(ox,oz)||1; ox/=on; oz/=on;
+  [0.55,1.05].forEach(hy=>slab(ax,az,bx,bz,y+hy-0.03,y+hy+0.03,0.06,M.timber,'deck',{top:M.timberDk}));
+  const n=Math.max(1,Math.round(L/1.2));
+  for(let i=0;i<=n;i++){const t=i/n,x=ax+dx*t,z=az+dz*t;
+    box(x-0.035,y,z-0.035,x+0.035,y+1.10,z+0.035,M.timberDk,'deck');}
+  /* the planters and plants are dressing, not structure — layer 'furnD' (deck furniture),
+     so the deck's bare floor-map mode strips them with the rest (Peter, 29 Aug: "de
+     plantenbakken horen alleen bij de meubels van het deck"); the rail itself stays */
+  for(let i=0;i<n;i++){const t=(i+0.5)/n,x=ax+dx*t+ox*0.16,z=az+dz*t+oz*0.16;
+    slab(x-ux*0.25,z-uz*0.25,x+ux*0.25,z+uz*0.25,y+0.80,y+1.02,0.22,M.planter,'plants',{top:M.plantDk});
+    slab(x-ux*0.22,z-uz*0.22,x+ux*0.22,z+uz*0.22,y+1.02,y+1.22,0.26,M.plant,'plants');  // the plant
+    slab(x-ux*0.16,z-uz*0.16,x+ux*0.16,z+uz*0.16,y+0.45,y+0.80,0.12,M.plant,'plants');  // trailing
+  }
+}
+RAILS.forEach(r=>rail(...r));
+
+/* ---------- 4g. the stair — one straight flight along the left wall ---------- */
+function stair(x0,z0,dirX,dirZ,run,y1,wide,layer,N){
+  const rise=y1/N, tread=run/(N-1);
+  for(let i=0;i<N;i++){
+    const x=x0+dirX*tread*i, z=z0+dirZ*tread*i;
+    const ex=dirX?x+dirX*tread:x+wide, ez=dirZ?z+dirZ*tread:z+wide;
+    box(Math.min(x,ex),rise*i,Math.min(z,ez),Math.max(x,ex),rise*(i+1),Math.max(z,ez),
+        M.steel,layer,{top:M.deckTop,side:M.steelDk});
+  }
+}
+/* foot at z = S_FOOT on the ground, top step arriving at the deck edge z = 6, x 0–1.
+   Layer 'zones', not 'deck': the stair is built on the ground and belongs on the ground plan. */
+/* its own layer 'stairs' (round 9): it must survive BOTH masters — visible in the deck-only
+   view (it carries you up) and in the wood-room view (it stands beside the zagerij) */
+stair(0,S_FOOT,0,-1,STAIR_RUN,DECK_TOP,1.5,'stairs',RISERS);  // 1.5 m wide — Peter, 29 Aug
+// handrail on the open side of the flight below the wood-area wall (z 9.5 → foot)
+(function(){const y0=DECK_TOP*(S_FOOT-10)/STAIR_RUN;
+  slab(1.5,10,1.5,S_FOOT,y0+0.85,y0+0.91,0.05,M.timber,'zones');})();
+
+/* the FIRE-ESCAPE at the office end (Peter, 29 Aug, second round): NOT a stair — a
+   drop-down escape LADDER flat against the east wall, just past the office's front
+   corner. It hangs stowed at deck level and is released FROM ABOVE, then rolls down;
+   there is no way up from the floor. Drawn deployed so it reads; footprint ~nothing.
+   Layer 'deck' — it belongs to the deck, not the ground plan. */
+(function escapeLadder(){
+  const X=19.86, z0=6.15, z1=6.65;                          // 0.5 m wide, flat on the wall
+  [z0,z1].forEach(z=>box(X,0.30,z-0.035,X+0.07,DECK_TOP+0.95,z+0.035,M.steelDk,'deck'));  // rails, up past the deck for grip
+  for(let y=0.55;y<DECK_TOP+0.8;y+=0.33)
+    box(X+0.005,y,z0,X+0.06,y+0.05,z1,M.steel,'deck');       // rungs
+  box(X-0.04,DECK_TOP-0.10,z0-0.08,X+0.10,DECK_TOP+0.06,z1+0.08,M.steelDk,'deck');        // the release bracket at deck edge
+})();
+
+/* ---------- 4h. curtains on the deck — 3 m high, "some space above" ----------
+   All open-curtain geometry (folds AND tracks) lives on its own 'curtains' layer, so one
+   checkbox strips every curtain — studio fronts, sides, and the outer run along the rail
+   and the kitchen terrace — while everything else stays (Peter, 29 Aug: see the coloured
+   studio floors and the deck plan clearly, with or without curtains). */
+function curtain(x0,z0,x1,z1,h,layer){
+  layer=layer||'curtains';
+  const horiz=Math.abs(x1-x0)>Math.abs(z1-z0);
+  const a0=horiz?x0:z0, L=(horiz?x1-x0:z1-z0), fix=horiz?z0:x0;
+  if(horiz) box(x0,h,fix-0.10,x1,h+0.12,fix+0.10,M.steel,layer);
+  else      box(fix-0.10,h,z0,fix+0.10,z1,M.steel,layer);
+  const bunch=L*0.22, N=6, w=bunch/N;
+  for(let end=0;end<2;end++){
+    for(let i=0;i<N;i++){
+      const s=end?a0+L-bunch+i*w:a0+i*w, e=s+w;
+      const c=i%2?'#7c7166':'#8b8074', t=(i%2?0.09:0.06);   // alternating fold depth
+      if(horiz) box(s,0,fix-t,e,h,fix+t,c,layer);
+      else      box(fix-t,0,s,fix+t,h,e,c,layer);
+    }
+  }
+}
+/* the same curtain drawn CLOSED — a continuous run of folds along the whole track */
+function curtainClosed(x0,z0,x1,z1,h,layer){
+  const horiz=Math.abs(x1-x0)>Math.abs(z1-z0);
+  const a0=horiz?x0:z0, L=(horiz?x1-x0:z1-z0), fix=horiz?z0:x0;
+  const N=Math.max(2,Math.round(L/0.28)), w=L/N;
+  for(let i=0;i<N;i++){
+    const s=a0+i*w, e=s+w, c=i%2?'#7c7166':'#8b8074', t=(i%2?0.09:0.06);
+    if(horiz) box(s,0,fix-t,e,h,fix+t,c,layer);
+    else      box(fix-t,0,s,fix+t,h,e,c,layer);
+  }
+}
+/* things that sit on the deck take a y-offset and vanish with the deck */
+function lift(fn,y){const s=faces.length;fn();for(let i=s;i<faces.length;i++){
+  faces[i].p=faces[i].p.map(v=>[v[0],v[1]+y,v[2]]); faces[i].deckOnly=true;}}
+
+/* TWO LAYERS OF CURTAIN (Helena + Peter, 28 Aug, second review):
+   inner — each studio's own front and sides, so a tenant closes their "door";
+   outer — the same 3 m curtain hung just INSIDE the timber rail along the whole open edge of the
+   deck (walkway, office front, and round the kitchen terrace), so that during an event the
+   upstairs disappears and people reach their studios unseen. The rail and the plants stay on the
+   event-floor side of it. Between the two layers the walkway is a corridor of curtain. */
+const OUTER_Z=5.85;                                           // 15 cm inside the rail at z = 6
+const OUTER=[                                                 // [x0,z0,x1,z1] — one run per column bay
+  [4,OUTER_Z,8,OUTER_Z],[8,OUTER_Z,12,OUTER_Z],[12,OUTER_Z,16,OUTER_Z],[16,OUTER_Z,20,OUTER_Z],
+  [3.85,6,3.85,9.85],[1.7,9.85,3.85,9.85],[1.7,6,1.7,9.85]    // round the 2.5 × 4 m kitchen terrace
+];
+lift(()=>{
+  [0,4,8,12].forEach(x=>curtain(x,5, x+4,5, CURTAIN_H));      // inner: the four studio fronts
+  [4,8,12].forEach(x=>curtain(x,0, x,5, CURTAIN_H));          // inner: between the studios
+  curtain(16,0, 16,OUTER_Z, CURTAIN_H);                       // inner: Studio 4 | office
+  OUTER.forEach(s=>curtain(s[0],s[1],s[2],s[3],CURTAIN_H));   // outer, gathered open
+}, DECK_TOP);
+lift(()=>{
+  OUTER.forEach(s=>curtainClosed(s[0],s[1],s[2],s[3],CURTAIN_H,'closed'));   // outer, CLOSED — event mode
+}, DECK_TOP);
+
+/* ---------- 4i. the two divider walls on wheels — NOT DRAWN ----------
+   Peter, 29 Aug: "die kleine losse muurtjes — die staan door de vloeren heen, die mogen
+   eraf." Removed from the drawing; the rolling walls stay a V3.2 plan element (p. 10),
+   they just aren't rendered. DIVIDERS is kept above should they ever come back. */
+
+/* ---------- 4j. furniture (illustrative — none of it is in the brief) ---------- */
+function table(x0,z0,x1,z1,h,c){
+  box(x0,h-0.06,z0,x1,h,z1,c||M.benchTop,'furniture',{top:c||M.benchTop});
+  const l=0.07;
+  [[x0,z0],[x1-l,z0],[x0,z1-l],[x1-l,z1-l]].forEach(p=>box(p[0],0,p[1],p[0]+l,h-0.06,p[1]+l,M.bench,'furniture'));
+}
+function shelf(x0,z0,x1,z1,h){
+  for(let i=0;i<3;i++) box(x0,0.45+i*0.55,z0,x1,0.49+i*0.55,z1,M.bench,'furniture');
+  box(x0,0,z0,x0+0.06,h,z0+0.06,M.bench,'furniture');
+  box(x1-0.06,0,z1-0.06,x1,h,z1,M.bench,'furniture');
+}
+function crate(x,z,w,d,h,c){box(x,0,z,x+w,h,z+d,c||M.box,'furniture');}
+function chair(x,z,r){
+  box(x,0.42,z,x+0.44,0.48,z+0.44,M.fabric,'furniture');
+  [[x,z],[x+0.38,z],[x,z+0.38],[x+0.38,z+0.38]].forEach(p=>box(p[0],0,p[1],p[0]+0.06,0.42,p[1]+0.06,M.dark,'furniture'));
+  if(r==='n')      box(x,0.48,z,x+0.44,0.90,z+0.06,M.fabric,'furniture');
+  else if(r==='s') box(x,0.48,z+0.38,x+0.44,0.90,z+0.44,M.fabric,'furniture');
+  else if(r==='w') box(x,0.48,z,x+0.06,0.90,z+0.44,M.fabric,'furniture');       // faces east
+  else             box(x+0.38,0.48,z,x+0.44,0.90,z+0.44,M.fabric,'furniture');  // 'e' — faces west
+}
+function highTable(x,z){
+  box(x,1.04,z,x+0.7,1.10,z+0.7,M.benchTop,'furniture');
+  box(x+0.31,0,z+0.31,x+0.39,1.04,z+0.39,M.dark,'furniture');
+  box(x+0.15,0,z+0.15,x+0.55,0.03,z+0.55,M.dark,'furniture');
+}
+function plant(x,z){
+  box(x-0.15,0,z-0.15,x+0.15,0.32,z+0.15,'#8a6a4e','furniture');
+  box(x-0.28,0.32,z-0.28,x+0.28,1.10,z+0.28,M.plant,'furniture');
+}
+function desk(x,z,face){   // 1.4 × 0.7 with a chair on the 'face' side
+  table(x,z,x+1.4,z+0.7,0.74,'#b89a72');
+  box(x+0.15,0.74,z+0.2,x+0.65,1.05,z+0.24,M.dark,'furniture');            // a screen
+  if(face==='s') chair(x+0.48,z+0.78,'s'); else chair(x+0.48,z-0.5,'n');
+}
+
+// --- Wood & Build Area: Peter's machines (under the deck, x 0–3, z 0–6) ---
+// plain ground furniture ('furnG') since round 8: the wood-room mini (&ui=wood) toggles
+// them with its "+ machines" button; the walls themselves stay structure ('walls')
+function retag(fn,layer){const s=faces.length;fn();for(let i=s;i<faces.length;i++)faces[i].layer=layer;}
+retag(()=>{
+box(0.5,0,1.0,2.3,0.92,2.4,M.mach,'furniture',{top:'#5f6871'});          // table saw body
+box(1.2,0.92,1.5,1.5,1.20,1.7,M.machAcc,'furniture');                    // blade guard
+box(2.2,0,4.6,2.9,1.65,5.5,M.mach,'furniture',{top:'#5f6871'});          // extractor
+table(0.3,3.2,3.6,4.1,0.90);                                             // long bench
+shelf(0.15,0.3,0.6,0.8,2.1);
+crate(0.3,5.0,1.1,0.9,0.7);
+// the front part — the 2.5 m entrance beside the 1.5 m stair (x 1.5–4, z 6–10)
+shelf(1.65,6.3,2.1,9.6,2.2);                                             // timber rack on the stair wall
+table(2.4,6.4,3.7,7.3,0.90);
+crate(2.5,8.4,0.8,0.8,0.55,'#96826a');
+},'furniture');
+
+/* ---------- 4j0. EVENT-FLOOR SETUPS (Peter, 29 Aug — photo renders for tenant page v2) ---
+   #setup=default|empty|dinner|theater|party swaps ONLY the loose furniture and the people on
+   the event floor. The built space (wood area, kitchen, studios, office) never changes.
+   'default' is the everyday scene the interactive model shows; the others are the situation
+   photos: ten tables of six for a dinner, rows facing a screen, a party with a DJ booth. */
+const SETUP=(function(){
+  const m=(((location.search||'')+'&'+(location.hash||'')).match(/setup=([a-z]+)/));
+  return m?m[1]:'default';
+})();
+/* &sdims=1 — the photo mode for ONE studio: instead of the hall dimensions, draw only the
+   4 × 5 m of a studio and its 3 m curtains (Peter, 29 Aug: "de maten intekenen") */
+const SDIMS=/sdims=1/.test((location.search||'')+(location.hash||''));
+/* &nozoom=1 — the hero "gif" mode (Peter, 29 Aug round 7): the embed may spin and be
+   dragged around, but wheel and pinch zoom are disabled — it behaves like a living photo */
+const NOZOOM=/nozoom=1/.test((location.search||'')+(location.hash||''));
+/* &ghostdeck=1 — the wood-room mini (round 9): everything of the deck above is drawn
+   GHOSTED, so you see the zagerij sits UNDER the terrace, inside the box, without the
+   deck stealing the picture */
+const GHOSTDECK=/ghostdeck=1/.test((location.search||'')+(location.hash||''));
+const PCOL=['#e8e5df','#cfd6dd','#e0b58a','#b8c4cc','#d8cfc4'];
+
+/* the screen on the big high wall above the entrance doors — modest size, and it hangs
+   there in EVERY ground-floor setup (Peter, 29 Aug: "bij de opstellingen graag het scherm
+   aan de muur … iets kleiner, iets bescheidener") */
+function wallScreen(){
+  const s=faces.length;
+  box(8.5,2.6,11.80,13.5,5.4,11.92,'#20242a','furniture');
+  box(8.7,2.8,11.76,13.3,5.2,11.82,'#e8e5df','furniture');
+  // the screen vanishes with the wall it hangs on: when the camera orbits past the front
+  // wall (which is backface-culled), a floating black slab would block the whole scene
+  for(let i=s;i<faces.length;i++) faces[i].frontWall=true;
+}
+if(SETUP!=='empty') wallScreen();
+
+if(SETUP==='default'){
+// --- the under-deck bay: a small workshop set-up + what a workshop stores ---
+box(8.0,0,1.0,9.8,1.15,1.8,M.bench,'furniture',{top:M.benchTop});       // stacked tables
+box(10.2,0,1.0,11.0,1.45,1.8,M.fabric,'furniture');                     // stacked chairs
+box(11.4,0,1.0,12.2,1.45,1.8,M.fabric,'furniture');
+crate(15.3,1.0,1.2,0.8,0.9,'#8d7a63');
+[[11.2,3.0],[14.2,3.0]].forEach(t=>{
+  table(t[0],t[1],t[0]+2.4,t[1]+1.0,0.75);
+  chair(t[0]+0.35,t[1]-0.62,'n'); chair(t[0]+1.55,t[1]-0.62,'n');
+  chair(t[0]+0.35,t[1]+1.06,'s'); chair(t[0]+1.55,t[1]+1.06,'s');
+});
+plant(19.2,5.3);
+
+// --- the front strip: a workshop on the right, a reception corner on the left ---
+[[13.0,7.4],[15.8,7.4],[13.0,9.7],[15.8,9.7]].forEach(t=>{
+  table(t[0],t[1],t[0]+2.4,t[1]+1.0,0.75);
+  chair(t[0]+0.35,t[1]-0.62,'n'); chair(t[0]+1.55,t[1]-0.62,'n');
+  chair(t[0]+0.35,t[1]+1.06,'s'); chair(t[0]+1.55,t[1]+1.06,'s');
+});
+[[5.4,7.4],[7.4,8.6],[5.6,9.9]].forEach(p=>highTable(p[0],p[1]));
+crate(11.4,11.3,0.9,0.9,0.5,'#96826a');
+plant(5.0,11.3);
+}
+
+if(SETUP==='dinner'){
+  // ten tables of six — two rows of five, sixty seats
+  for(let i=0;i<5;i++) [7.0,9.8].forEach(zz=>{
+    const xx=4.0+i*2.90;      // was 4.6 + i*3.05 — pulled in so the bar wall is free
+    table(xx,zz,xx+2.4,zz+1.0,0.75);
+    for(let c=0;c<3;c++){ chair(xx+0.22+c*0.78,zz-0.62,'n'); chair(xx+0.22+c*0.78,zz+1.06,'s'); }
+  });
+  table(4.8,2.2,8.8,3.2,0.90);                                          // the serving table, under the deck
+  plant(4.6,1.2); plant(15.6,11.4); plant(19.3,1.2);
+  [[6.2,6.3],[9.6,8.85],[12.9,6.3],[16.1,8.85],[18.3,7.6],[5.6,11.0],[10.8,11.3],[14.6,11.3],
+   [7.9,2.7],[11.5,3.4],[15.2,2.6],[17.8,4.1]]
+    .forEach((p,i)=>people.push({x:p[0],z:p[1],y:0,h:1.62+((i*41)%14)/100,c:PCOL[i%5]}));
+}
+
+if(SETUP==='theater'){
+  // a presentation: the wallScreen() above hangs on the front wall — the 8 m wall above
+  // the entrance doors (Peter, 29 Aug) — and everyone sits under the deck looking at it
+  for(let r=0;r<6;r++) for(let c=0;c<10;c++){
+    const xx=5.6+c*1.3+(c>4?0.9:0);                                     // centre aisle after col 5
+    chair(xx,1.9+r*1.15,'n');                                           // facing the big wall
+  }
+  people.push({x:11.0,z:10.6,y:0,h:1.75,c:'#e0b58a'});                  // the presenter, under the screen
+  [[5.0,1.2],[19.2,2.6],[17.8,8.6]].forEach((p,i)=>people.push({x:p[0],z:p[1],y:0,h:1.68,c:PCOL[i%5]}));
+}
+
+if(SETUP==='party'){
+  // a party: DJ booth on the storage wall, high tables, the floor open for dancing
+  box(17.6,0,5.4,19.4,1.05,6.3,M.dark,'furniture',{top:'#4e565f'});     // DJ booth
+  box(18.1,1.05,5.55,18.9,1.35,6.15,M.mach,'furniture');                // the gear
+  [[5.6,7.6],[6.8,10.4],[9.0,2.6]].forEach(p=>highTable(p[0],p[1]));
+  plant(4.7,11.2); plant(15.2,11.5);
+  [[8,7.5],[9.2,8.4],[10.4,7.2],[11.3,8.8],[12.6,7.8],[13.5,9.2],[14.8,8.1],[10.0,10.3],[12.0,10.8],[8.6,9.9],
+   [15.8,6.9],[16.6,8.7],[7.1,6.7],[9.7,6.1],[13.0,5.4],[14.2,3.8],[11.0,4.2],[8.9,4.6],[16.4,4.4],[17.8,10.4],
+   [6.2,8.9],[15.1,10.9],[17.6,11.2],[5.9,5.2],[7.7,3.4],[12.4,2.9],[16.8,2.2],[18.5,8.9]]
+    .forEach((p,i)=>people.push({x:p[0],z:p[1],y:0,h:1.60+((i*53)%18)/100,c:PCOL[i%5]}));
+}
+
+// --- the deck: four hobbyist studios ---
+lift(()=>{
+  [[0,C.s1],[4,C.s2],[8,C.s3],[12,C.s4]].forEach((s,i)=>{
+    const x=s[0];
+    table(x+0.5,0.5,x+3.5,1.4,0.80);                                     // worktable on the back wall
+    if(i%2===0) shelf(x+0.2,2.2,x+0.65,4.4,1.9); else shelf(x+3.35,2.2,x+3.8,4.4,1.9);
+    chair(x+1.6,1.9,'n');
+    crate(x+2.6,3.2,0.8,0.8,0.5);
+    plant(x+(i%2?0.6:3.4),4.4);
+  });
+  // the office: four desks, a sofa, plants
+  desk(16.5,0.6,'s'); desk(18.1,0.6,'s');
+  desk(16.5,2.4,'n'); desk(18.1,2.4,'n');
+  box(16.6,0,4.6,18.4,0.72,5.3,M.fabric,'furniture',{top:'#5b6d7c'});    // sofa
+  box(16.6,0.72,4.6,18.4,1.10,4.85,M.fabric,'furniture');
+  plant(19.5,5.4); plant(19.5,0.5);
+  // the kitchen terrace. Peter's p. 13 draws an L-shaped bar along the two open edges —
+  // read here as the kitchen counter, inside the rail, looking down over the event floor.
+  // the bar IS the counter (drawn with the deck); underneath it: fridges, the sink units,
+  // the kitchen things — out of sight from the floor below (Peter, 29 Aug)
+  box(3.45,0,6.6,3.86,1.00,7.5,M.kitchen,'furniture',{top:M.kitchenTop});                 // fridge under the east bar
+  box(3.45,0,7.7,3.86,0.95,8.6,'#8f9aa5','furniture');                                    // sink unit under the east bar
+  box(2.0,0,9.15,2.9,0.95,9.56,M.kitchen,'furniture',{top:M.kitchenTop});                 // cabinets under the front bar
+  box(1.60,0,6.25,2.20,1.80,6.85,M.kitchen,'furniture',{top:M.kitchenTop});               // tall fridge, stair-side corner
+  // the picnic table (Peter, 29 Aug round 7): one long table with two benches — the
+  // terrace's lunch spot, big enough to actually read in the photos
+  table(1.85,7.0,3.15,7.75,0.75,'#b89a72');
+  box(1.90,0.42,6.55,3.10,0.50,6.85,M.benchTop,'furniture');                              // bench, bar side
+  box(1.90,0.42,7.90,3.10,0.50,8.20,M.benchTop,'furniture');                              // bench, front side
+}, DECK_TOP);
+
+/* ---------- 4jz. THE DRESSING — "a unique event space in a working art hub" -------------
+   EVENT-SITE ONLY. This section does not exist in ../the-space-3d.html and must never be
+   copied back into it: Peter's tenant page sells studios, and this is scenery.
+
+   Helena, 31 Aug: the room read grey and dead — "make the room very cool … some plants,
+   some lights … make it creative somehow", and the pitch calls the place an artistic
+   jungle. Everything here is on the layer 'jungle', so &jungle=0 gives the plain room back.
+
+   ⚠️ Nothing here is a claim. It is scenery, not a spec: no plant, light or panel below is
+   costed in boq.py or promised on any page. Treat it the way the furniture is treated.
+   -------------------------------------------------------------------------------------- */
+const JGL={
+  leaf:'#4f9a4a', leafDk:'#356f37', leafLt:'#74bd63', pot:'#7d6247', potDk:'#5e4834',
+  grow:'#6400cc', growHouse:'#2a2f38',
+  bulb:'#ffe9b0', wire:'#3a3f47',
+  art1:'#6400cc', art2:'#019999', art3:'#c9dff2', art4:'#4d00a0'
+};
+const GLOW_GROW='rgba(100,0,204,.80)', GLOW_BULB='rgba(255,225,160,.9)';
+
+/* a floor plant with some presence: tapered pot, trunk, three offset canopies.
+   s scales it — 1.0 is about 2 m tall, which is a real ficus, not a desk succulent. */
+function bigPlant(x,z,s){
+  s=s||1;
+  const pw=0.20*s;
+  box(x-pw,0,z-pw, x+pw,0.26*s,z+pw, JGL.potDk,'jungle',{top:JGL.pot});
+  box(x-pw*0.84,0.26*s,z-pw*0.84, x+pw*0.84,0.34*s,z+pw*0.84, JGL.pot,'jungle');
+  box(x-0.035*s,0.34*s,z-0.035*s, x+0.035*s,0.92*s,z+0.035*s, JGL.potDk,'jungle');   // trunk
+  const can=[[0.34,0.66,0.18,JGL.leafDk],[0.27,0.95,-0.13,JGL.leaf],[0.19,1.20,0.09,JGL.leafLt]];
+  can.forEach(([r,y,off,c])=>{
+    box(x-r*s+off*s*0.4, y*s, z-r*s-off*s*0.3, x+r*s+off*s*0.4, (y+0.21)*s, z+r*s-off*s*0.3, c,'jungle');
+  });
+  // two blades breaking the silhouette, so it does not read as stacked crates
+  box(x+0.17*s,0.84*s,z-0.04*s, x+0.24*s,1.44*s,z+0.04*s, JGL.leaf,'jungle');
+  box(x-0.24*s,0.98*s,z-0.035*s, x-0.17*s,1.52*s,z+0.035*s, JGL.leafDk,'jungle');
+}
+
+/* a plant hung from a soffit — wire, pot, and foliage that trails BELOW the pot */
+function hangPlant(x,z,yTop,drop){
+  const yPot=yTop-drop;
+  box(x-0.012,yPot+0.24,z-0.012, x+0.012,yTop,z+0.012, JGL.wire,'jungle');       // the wire
+  box(x-0.17,yPot,z-0.17, x+0.17,yPot+0.26,z+0.17, JGL.pot,'jungle',{top:JGL.potDk});
+  box(x-0.30,yPot-0.34,z-0.30, x+0.30,yPot+0.06,z+0.30, JGL.leaf,'jungle');      // the ball
+  box(x-0.13,yPot-0.86,z-0.09, x-0.02,yPot-0.20,z+0.03, JGL.leafDk,'jungle');    // two trailing vines
+  box(x+0.06,yPot-0.68,z+0.04, x+0.16,yPot-0.16,z+0.16, JGL.leafLt,'jungle');
+}
+
+/* horticultural bar: a dark housing with a magenta tube under it. This is where the site's
+   accent colour comes from, and it is the one light that says "things grow here". */
+function growBar(x0,z0,x1,z1,y){
+  box(x0,y,z0-0.10, x1,y+0.10,z1+0.10, JGL.growHouse,'jungle');
+  box(x0+0.06,y-0.09,z0-0.055, x1-0.06,y,z1+0.055, JGL.grow,'jungle',{glow:true,glowC:GLOW_GROW});
+}
+
+/* a festoon run: bulbs on a slack cable. The one element that reads "event" instantly. */
+function festoon(x0,z0,x1,z1,yEnd,sag,n){
+  const P=t=>[x0+(x1-x0)*t, yEnd-sag*Math.sin(Math.PI*t), z0+(z1-z0)*t];
+  let prev=P(0);   // kept: the walk still needs the previous point
+  for(let i=1;i<=n;i++){
+    const t=i/n, c=P(t);
+    /* NO cable is drawn. A 20 m hairline came out as scaffolding stretched across the whole
+       room and read as structure, not as party lights. Bulbs alone read as a string — the eye
+       joins them. (Tried and rejected, 1 Sep; don't put the cable back.) */
+    if(i<n){ const j=((i*37)%5)*0.018;
+      box(c[0]-0.085,c[1]-0.22-j,c[2]-0.085, c[0]+0.085,c[1]-0.05-j,c[2]+0.085,
+                JGL.bulb,'jungle',{glow:true,glowC:GLOW_BULB}); }
+  }
+}
+
+/* a canvas on a wall — it is an art hub, so there is art on the walls */
+function artPanel(x,z,y0,y1,w,c,facing){
+  if(facing==='w') box(x-0.06,y0,z-w/2, x,y1,z+w/2, c,'jungle',{side:c});
+  else             box(x-w/2,y0,z, x+w/2,y1,z+0.06, c,'jungle',{side:c});
+}
+
+/* a hanging fabric banner in the 8 m volume — Peter's own material language, and it fills
+   the dead grey air above head height that made the first renders feel like a warehouse */
+function banner(x,z,yTop,len,w,c){
+  box(x-w/2,yTop-len,z-0.02, x+w/2,yTop,z+0.02, c,'jungle',{side:shadeHex(c,0.86)});
+  box(x-w/2-0.04,yTop-0.06,z-0.05, x+w/2+0.04,yTop,z+0.05, JGL.wire,'jungle');
+}
+
+(function dressTheRoom(){
+  /* --- 1. the hanging garden along the deck edge: the deck stops being a brown band --- */
+  for(let x=4.6;x<=19.2;x+=1.55) hangPlant(x, 5.55, UNDER-0.02, 0.55+((x*7)%3)*0.16);
+  /* --- 2. grow lights under the deck, over the plants and the under-deck bay --- */
+  [1.4,3.4,5.2].forEach(z=>growBar(3.2,z,18.8,z, UNDER-0.14));
+  /* --- 3. more grow light where the hanging garden is, seen from the event floor --- */
+  growBar(4.4,5.72,19.4,5.72, UNDER-0.30);
+
+  /* --- 4. festoons across the 8 m half — three runs, deep enough to read as slack --- */
+  [7.9,10.6].forEach((z,i)=>festoon(0.6,z,19.4,z, 7.0-i*0.25, 1.85, 20));
+
+  /* --- 5. banners in the high air (SA purple, periwinkle, warm) --- */
+  [[3.2,7.0,JGL.art1,1.9],[6.4,6.9,JGL.art2,1.5],[15.0,6.9,JGL.art3,1.7],[18.2,7.0,JGL.art4,1.4]]
+    .forEach(([x,z,c,len])=>banner(x,z,RH-0.25,len,0.85,c));
+
+  /* --- 6. floor plants: the perimeter, never the middle — the floor has to stay sellable --- */
+  [[17.55,6.85,0.85],[17.6,11.95,0.75],[4.3,10.9,0.75],
+   [18.9,1.3,0.90],[18.9,4.4,0.85],[10.4,0.8,0.80],[4.6,1.0,0.85]]
+    .forEach(([x,z,s])=>bigPlant(x,z,s));
+
+  /* --- 7. art on the east wall (the west wall is the stair, the front wall is the screen) --- */
+  [[8.2,JGL.art1],[9.9,JGL.art2],[11.4,JGL.art4]]
+    .forEach(([z,c])=>artPanel(RW-0.04,z,2.45,3.95,1.35,c,'w'));
+})();
+
+/* ---------- 4jy. THE BAR — east wall, right-hand corner, under the canvases -----------
+   Helena, 1 Sep: "the bar needs to be … in that side in that corner", on the right, under
+   the three paintings. Its own layer 'bar' (&bar=0 removes it).
+
+   It runs along the east wall from z 7.4 to 11.6 — 4.2 m of counter with a working aisle
+   behind it and the back bar against the wall. The event setups were pulled ~0.8 m west so
+   nothing stands inside it; the dinner still seats sixty.
+
+   ⚠️ Scenery, like the rest of 4jz — a drawn bar, not a costed one. Drinks are a real
+   revenue line in event_floor.py, but no counter, tap or fridge here is in any budget.
+   ------------------------------------------------------------------------------------- */
+const BAR={ z0:7.4, z1:11.6, front:18.42, back:19.90, aisle:19.42,
+            body:'#6400cc', bodyDk:'#4d00a0', top:'#c08a4c', topDk:'#9d6f3c',
+            cab:'#3b3f46', shelf:'#8a6a44', glow:'#019999' };
+
+(function theBar(){
+  const B=BAR;
+  // back bar: cabinet against the wall, two shelves, bottles
+  box(B.aisle,0,B.z0, B.back,1.05,B.z1, B.cab,'bar',{top:'#4a4f57'});
+  [1.42,1.86].forEach(y=>box(B.aisle+0.06,y,B.z0+0.1, B.back-0.02,y+0.07,B.z1-0.1, B.shelf,'bar'));
+  const BOT=['#019999','#6400cc','#c9dff2','#4d00a0','#8a6a44'];
+  for(let i=0;i<26;i++){
+    const z=B.z0+0.35+i*0.155, y=(i%2)?1.49:1.93, h=0.22+((i*7)%4)*0.035;
+    box(B.aisle+0.14,y,z-0.045, B.aisle+0.23,y+h,z+0.045, BOT[i%5],'bar');
+  }
+  // the counter: purple body, timber top with an overhang you can put a glass on
+  box(B.front,0,B.z0, B.aisle-0.02,1.02,B.z1, B.body,'bar',{side:B.body});
+  box(B.front-0.14,1.02,B.z0-0.06, B.aisle+0.04,1.12,B.z1+0.06, B.topDk,'bar',{top:B.top});
+  // a Lush Green strip under the counter lip — the light that makes a bar read as a bar
+  box(B.front-0.10,0.62,B.z0+0.05, B.front-0.04,0.70,B.z1-0.05, B.glow,'bar',
+      {glow:true,glowC:'rgba(1,153,153,.85)'});
+  // four stools
+  [7.95,8.95,9.95,10.95].forEach(z=>{
+    box(17.86,0.70,z-0.19, 18.24,0.78,z+0.19, B.topDk,'bar',{top:B.top});
+    box(18.01,0,z-0.05, 18.09,0.70,z+0.05, '#4a4f57','bar');
+    box(17.92,0.02,z-0.14, 18.18,0.06,z+0.14, '#4a4f57','bar');
+  });
+})();
+
+/* ---------- 4jx. THE SPLIT — the room closed down to a smaller room ------------------
+   EVENT-SITE ONLY, layer 'split', DEFAULT OFF. Nothing that already exists changes.
+
+   Helena, 1 Sep, and it is the sharpest problem on the site: *"if I'm looking for something
+   small and I see 150 square meters, I'm going to be — that's not for me."* The three price
+   bands ARE three sizes, but a visitor cannot picture the small one, so they leave.
+
+   Drawn as a CURTAIN on a ceiling track, not as Peter's rolling walls — he took those out of
+   the drawing on 29 Aug ("die kleine losse muurtjes … die mogen eraf") and that decision
+   stands. A curtain is also what the site already tells people ("walls that roll" plus the
+   curtains from the storage closets), and it is how the deck is already divided.
+
+   &split=b1  closes to the small room  (the ≤50 m² band)
+   &split=b2  closes to the middle room (the 51–100 m² band)
+   ⚠️ Scenery, and an ILLUSTRATION of a decided price band — not a surveyed partition line.
+   ------------------------------------------------------------------------------------- */
+const SPLIT=(function(){
+  const m=(((location.search||'')+'&'+(location.hash||'')).match(/split=(b1|b2)/));
+  return m?m[1]:null;
+})();
+(function drawSplit(){
+  if(!SPLIT) return;
+  /* The floor is 20 m wide and the front strip runs z 6 → 12. Closing it across x gives a
+     room against the east wall, which is where the bar and the canvases already are — so
+     the small room is the one with the bar in it. b1 keeps ~8.6 m of the width (~50 m²),
+     b2 keeps ~14.2 m (~90 m²). */
+  const x = SPLIT==='b1' ? 11.3 : 5.7;
+  const H = 3.4, TRACK_Y = 4.0;
+  // the track
+  box(x-0.06,TRACK_Y-0.10,6.0, x+0.06,TRACK_Y,11.98, '#4a525c','split');
+  // the curtain itself, drawn as folds so it reads as fabric and not as a wall
+  for(let z=6.02;z<11.98;z+=0.30){
+    const d=((z*13)%2)?0.055:0.018;
+    box(x-d,TRACK_Y-H,z, x+d,TRACK_Y-0.10,Math.min(z+0.30,11.98), '#6f6257','split',
+        {side:((z*13)%2)?'#7d6f62':'#5f544a'});
+  }
+})();
+
+/* ---------- 4k. people (1.75 m silhouettes, depth-sorted with the geometry) ----------
+   The GROUND crowd belongs to the default scene only (each setup brings its own people);
+   the DECK people are always there — the deck's "+ furniture & people" mode shows them
+   whatever the floor below is doing (Peter, 29 Aug). */
+if(SETUP==='default'){
+[[14.0,6.7],[15.3,6.7],[17.0,6.7],[18.3,6.7],[14.0,11.1],[15.3,11.1],[17.0,11.1],[18.3,11.1],
+ [5.2,8.4],[6.4,8.0],[8.3,8.6],[7.2,10.6],[12.6,11.4],
+ [12.4,2.4],[15.6,2.4],[13.2,4.6],[1.6,2.8],[2.9,7.8]]
+ .forEach((p,i)=>people.push({x:p[0],z:p[1],y:0,h:1.62+((i*37)%14)/100,c:PCOL[i%5]}));
+}
+// the deck: one person per studio, two in the office, one on the kitchen terrace
+[[1.8,2.6],[6.1,2.6],[9.4,3.6],[13.7,2.8],[14.3,5.5],[17.2,1.75],[18.8,3.6],[2.4,8.2],[3.2,6.6]]
+ .forEach((p,i)=>people.push({x:p[0],z:p[1],y:DECK_TOP,h:1.62+((i*37)%14)/100,c:PCOL[i%5]}));
+// one person halfway up the stair (ground level in the masters: it goes with the ground)
+(function(){const z=8.4, y=DECK_TOP*(S_FOOT-z)/STAIR_RUN; people.push({x:0.5,z:z,y:y,h:1.7,c:'#e0b58a',stair:true});})();
+
+/* ---------- 4l. labels ---------- */
+function esc(s){return s.replace(/&amp;/g,'&').replace(/&times;/g,'×').replace(/&sup2;/g,'²').replace(/&middot;/g,'·').replace(/&mdash;/g,'—').replace(/&rsquo;/g,'’');}
+function sizeOf(z){
+  if(z.size) return z.size;
+  const a=area(z.pts)+(z.id==='wood'?area(GROUND.find(g=>g.id==='wood2').pts):0);
+  const hh=z.h?(' &middot; '+(z.h===8?'8 m high':'4 m to the deck')):'';
+  return '&asymp;'+Math.round(a)+' m&sup2;'+hh;
+}
+GROUND.concat(DECKZ).forEach(z=>{
+  if(!z.name) return;
+  const isDeck=DECKZ.indexOf(z)>=0;
+  let [cx,cz]=centroid(z.pts);
+  if(z.id==='front'){cx=10.5;cz=9.2;}                    // the concave one: put it on the open floor
+  if(z.id==='wood'){cx=2.0;cz=3.0;}
+  const under=!isDeck && cz<DECK_D;
+  labels.push({deckOnly:isDeck, underDeck:under, x:cx, z:cz, y:(isDeck?DECK_TOP:0)+1.55,
+               t:esc(z.lbl||z.name), s:esc(sizeOf(z).replace(/&asymp;/g,'≈')), c:z.c, tag:z.tag});
+});
+
+/* ---------- 4m. dimension lines ---------- */
+if(SDIMS){
+  // studio 2 only: its 4 × 5 m — and the 3 m curtains, but only when they are drawn
+  dims.push({a:[4,DECK_TOP+0.05,5.6],b:[8,DECK_TOP+0.05,5.6],t:'4 m'});
+  dims.push({a:[8.6,DECK_TOP+0.05,0],b:[8.6,DECK_TOP+0.05,5],t:'5 m'});
+  if(!/curtains=0/.test((location.search||'')+(location.hash||'')))
+    dims.push({a:[3.6,DECK_TOP,5.2],b:[3.6,DECK_TOP+CURTAIN_H,5.2],t:'3 m curtains'});
+} else {
+dims.push({a:[0,0,12.9],b:[20,0,12.9],t:'20 m'});
+dims.push({a:[20.9,0,0],b:[20.9,0,12],t:'12 m'});
+dims.push({a:[-0.9,0,12],b:[-0.9,RH,12],t:'8 m high'});
+dims.push({a:[20.9,0,12.9],b:[20.9,UNDER,12.9],t:'4.00 m clear under the deck'});
+dims.push({a:[20.9,DECK_TOP,12.9],b:[20.9,RH,12.9],t:'~3.7 m above it (0.28 m floor assumed)'});
+dims.push({a:[-0.9,DECK_TOP,0],b:[-0.9,DECK_TOP,6],t:'the deck — 6 m deep'});
+dims.push({a:[20.9,DECK_TOP,0.3],b:[20.9,DECK_TOP+CURTAIN_H,0.3],t:'3 m curtains'});
+}
+
+/* --------------------------------------------------------------------------
+   5. CAMERA
+   -------------------------------------------------------------------------- */
+let azim=-0.85, elev=0.44, radius=27, target=[0,2.6,0];   // = VIEWS.overview
+let eye=[0,0,0], bR=[1,0,0], bU=[0,1,0], bF=[0,0,1];
+const NEAR=0.35;
+let fovScale=1, panX=0, panelW=0;
+
+function updateCam(){
+  const ce=Math.cos(elev), se=Math.sin(elev);
+  eye=[target[0]+radius*ce*Math.sin(azim), target[1]+radius*se, target[2]+radius*ce*Math.cos(azim)];
+  bF=norm(sub(target,eye));
+  bR=norm(cross(bF,[0,1,0]));
+  bU=cross(bR,bF);
+  fovScale=Math.min(W,H*1.35)*0.60;
+  panX=(W>820)?72:0;
+  panelW=(W>820)?306:0;
+}
+function toCam(p){const d=sub(p,eye);return[dot(d,bR),dot(d,bU),dot(d,bF)];}
+function toScr(v){const s=fovScale/v[2];return[W/2+panX+v[0]*s,H/2+14-v[1]*s];}
+
+const VIEWS={
+  /* from the front-right: the four studios read left→right along the back wall, the stair
+     and the kitchen terrace stand out at the far left, the closets show under the deck */
+  overview:{az:0.62,el:0.46,r:27,t:[0,2.6,0],layers:{deck:1,shell:1,dims:1,walls:1,closed:0},focus:0},
+  rent:    {az:0.55,el:0.80,r:25,t:[-1,2.4,-1],layers:{deck:1,shell:1,dims:0,walls:1,closed:0},focus:1},
+  /* the event floor, lower and closer, so its two halves read together */
+  event:   {az:0.66,el:0.30,r:20,t:[1,1.2,2.4],layers:{deck:1,shell:1,dims:0,walls:1,closed:1},focus:0},   // outer curtain CLOSED: the upstairs disappears
+  /* standing in the under-deck bay at eye height, looking east along it */
+  under:   {az:-1.385,el:0.0,r:8.14,t:[5,1.6,-3.5],layers:{deck:1,shell:1,dims:0,walls:1,closed:0},focus:0},
+  /* the deck from its left end, over the stair head */
+  deck:    {az:-1.45,el:0.30,r:20,t:[-1,5.0,-3],layers:{deck:1,shell:1,dims:0,walls:1,closed:0},focus:0},
+  /* standing at the back of Studio 3, looking out through its open curtain over the rail
+     and the void to the door wall — what a tenant sees from their bench */
+  studio:  {az:-3.07,el:0.08,r:7.6,t:[0.5,5.5,2.5],layers:{deck:1,shell:1,dims:0,walls:1,closed:0},focus:0},
+  /* from the event floor, looking up at the kitchen terrace over the stair */
+  terrace: {az:1.086,el:0.023,r:8.6,t:[-7.6,4.8,1.5],layers:{deck:1,shell:1,dims:0,walls:1,closed:0},focus:0},
+  /* plan = the ground floor, as Peter drew it on p. 10. Tick "Deck" to see the level above. */
+  plan:    {az:0,el:1.545,r:24,t:[0,1.2,0],layers:{deck:0,shell:0,dims:1,walls:0,closed:0},focus:0}
+};
+const TOUR=['overview','rent','event','under','deck','studio','terrace','overview'];
+
+/* the control model (Peter, 29 Aug): two master switches — ground & deck — each with its
+   own dressing. Ground furniture/people come with the chosen floor setup; the deck has
+   furnD/peopleD/curtains. labels & dims are global. 'furniture' faces split by deckOnly. */
+const layers={deck:true,ground:true,dividers:true,labels:true,dims:true,shell:true,zones:true,
+              walls:true,closed:false,shellfloor:true,curtains:true,
+              furnG:true,furnD:true,peopleG:true,peopleD:true,
+              stairs:true,woodzone:true,plants:true,scale:true,jungle:true,bar:true,split:true};
+let autoSpin=true, tourOn=false, tourIdx=0, tourT=0, focusRent=false;
+
+const tw={on:false,t0:0,dur:1100,a0:0,a1:0,e0:0,e1:0,r0:0,r1:0,g0:[0,0,0],g1:[0,0,0]};
+function now(){return performance.now();}
+function goTo(v){
+  let a1=v.az;
+  while(a1-azim>Math.PI) a1-=2*Math.PI;
+  while(a1-azim<-Math.PI) a1+=2*Math.PI;
+  tw.on=true; tw.t0=now();
+  tw.a0=azim; tw.a1=a1; tw.e0=elev; tw.e1=v.el; tw.r0=radius; tw.r1=v.r;
+  tw.g0=target.slice(); tw.g1=v.t.slice();
+}
+function applyView(k,keepSpin){
+  const v=VIEWS[k]; if(!v) return;
+  goTo(v);
+  focusRent=!!v.focus;
+  for(const L in v.layers){
+    layers[L]=!!v.layers[L];
+    const cb=document.querySelector('[data-layer="'+L+'"]'); if(cb) cb.checked=layers[L];
+  }
+  if(!keepSpin) autoSpin=(k==='overview'||k==='rent');
+  document.querySelectorAll('#views button').forEach(b=>b.classList.toggle('on', b.dataset.v===k));
+}
+
+document.querySelectorAll('#views button').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.v==='tour'){ tourOn=!tourOn; tourIdx=0; tourT=now();
+    b.classList.toggle('on',tourOn);
+    b.innerHTML=tourOn?'&#9632; Stop':'&#9658; Tour';
+    if(tourOn) applyView(TOUR[0],true); return; }
+  tourOn=false; const tb=document.getElementById('tourBtn');
+  tb.classList.remove('on'); tb.innerHTML='&#9658; Tour';
+  applyView(b.dataset.v);
+}));
+
+/* --------------------------------------------------------------------------
+   6. RENDER
+   -------------------------------------------------------------------------- */
+function clipNear(poly){                       // Sutherland–Hodgman against z = NEAR
+  const out=[];
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i], b=poly[(i+1)%poly.length];
+    const ain=a[2]>=NEAR, bin=b[2]>=NEAR;
+    if(ain) out.push(a);
+    if(ain!==bin){
+      const t=(NEAR-a[2])/(b[2]-a[2]);
+      out.push([a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, NEAR]);
+    }
+  }
+  return out;
+}
+function mix(a,b,t){
+  const A=parseInt(a.slice(1),16), B=parseInt(b.slice(1),16);
+  const r=(((A>>16)&255)*(1-t)+((B>>16)&255)*t)|0;
+  const g=(((A>>8)&255)*(1-t)+((B>>8)&255)*t)|0;
+  const l=((A&255)*(1-t)+(B&255)*t)|0;
+  return '#'+((1<<24)+(r<<16)+(g<<8)+l).toString(16).slice(1);
+}
+function litColor(f,flip){
+  let c=f.c, ny=f.n[1], d=dot(f.n,LIGHT);
+  if(f.two&&flip){d=-d;ny=-ny;}
+  if(focusRent && f.tag!=='rent') c=mix(c,'#3c414a',0.72);   // everything but the four studios recedes
+  const lum=0.46+0.46*Math.max(0,d)+0.16*(0.5+0.5*ny);
+  return shadeHex(c,lum);
+}
+
+let pickable=[];
+
+function render(){
+  updateCam();
+  const g=ctx.createLinearGradient(0,0,0,H);
+  /* EVENT-SITE COPY: flat --night #14180F, the site's own dark surface, instead of the
+     model's blue-grey gradient. The renders are dropped straight onto that background, so
+     matching it here means there is no seam to patch afterwards. (Peter's copy keeps the
+     gradient — this is one of the few places the two files differ on purpose.) */
+  g.addColorStop(0,'#deebf7'); g.addColorStop(1,'#deebf7');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  const draw=[];
+  pickable=[];
+
+  for(const f of faces){
+    const L=f.layer;
+    if(L==='furniture'){ if(f.deckOnly ? !layers.furnD : !layers.furnG) continue; }
+    else if(L==='furnD'){ if(!layers.furnD||!layers.deck) continue; }
+    else if(L==='plants'){ if(!layers.plants||!layers.furnD||!layers.deck) continue; }
+    else if(!layers[L] && L!=='shellfloor') continue;
+    /* the ground master hides the ground DRESSING; the zagerij walls ('walls') stay — they
+       carry the terrace bar, and the deck-only view must not look like it floats (round 8) */
+    if(!layers.ground && !f.deckOnly && (L==='zones'||L==='dividers'||L==='furniture')) continue;
+    if(f.frontWall && eye[2]>6.2) continue;   // camera outside the front wall: screen goes with it
+    if(f.deckOnly && !layers.deck) continue;
+    let flip=false;
+    if(!f.two){
+      if(dot(f.n, sub(eye,f.p[0]))<=0) continue;
+    }else{
+      flip = dot(f.n, sub(eye,f.p[0]))<0;
+    }
+    let cp=f.p.map(toCam);
+    if(cp.some(v=>v[2]<NEAR)){
+      cp=clipNear(cp); if(cp.length<3) continue;
+    }
+    let zsum=0; for(const v of cp) zsum+=v[2];
+    const depth=zsum/cp.length;
+    const sp=cp.map(toScr);
+    /* in "The 4 studios" everything that is not a studio goes ghostly, so the four coloured
+       plots read through the curtains and the structure */
+    let a=(focusRent && f.tag!=='rent' && f.layer!=='shellfloor')?Math.min(f.alpha,0.38):f.alpha;
+    if(GHOSTDECK && (f.deckOnly||f.layer==='deck')) a=Math.min(a,0.20);   // the deck fades, the room below reads
+    draw.push({sp:sp,d:depth+f.bias,c:litColor(f,flip),glow:f.glow,glowC:f.glowC,a:a,f:f});
+    if(f.pick) pickable.push({poly:sp,z:depth,zone:f.pick});
+  }
+
+  for(const p of people){
+    const onDeck=p.y>=DECK_TOP-0.01;
+    if(onDeck && (!layers.deck||!layers.peopleD)) continue;
+    if(!onDeck && (!layers.ground||!layers.peopleG)) continue;
+    const foot=toCam([p.x+OX,p.y,p.z+OZ]), head=toCam([p.x+OX,p.y+p.h,p.z+OZ]);
+    if(foot[2]<3.2||head[2]<3.2) continue;
+    draw.push({person:{f:toScr(foot),h:toScr(head),c:p.c},d:(foot[2]+head[2])/2});
+  }
+
+  draw.sort((a,b)=>b.d-a.d);
+
+  for(const o of draw){
+    if(o.person){ drawPerson(o.person); continue; }
+    const s=o.sp;
+    ctx.beginPath(); ctx.moveTo(s[0][0],s[0][1]);
+    for(let i=1;i<s.length;i++) ctx.lineTo(s[i][0],s[i][1]);
+    ctx.closePath();
+    if(o.a<1) ctx.globalAlpha=o.a;
+    ctx.fillStyle=o.c; ctx.fill();
+    if(o.glow){ ctx.shadowColor=o.glowC||'rgba(255,240,200,.8)'; ctx.shadowBlur=o.glowC?26:18; ctx.fill(); ctx.shadowBlur=0; }
+    if(o.a<1) ctx.globalAlpha=1;
+  }
+
+  if(layers.shell) drawHallEdges();
+  if(layers.dims) drawDims();
+  if(layers.labels) drawLabels();
+  drawScaleBar();
+}
+
+function drawHallEdges(){
+  const c=[[0,0],[RW,0],[RW,RD],[0,RD]];
+  const E=[];
+  for(let i=0;i<4;i++){
+    const a=c[i], b=c[(i+1)%4];
+    E.push([[a[0],0,a[1]],[b[0],0,b[1]]]);
+    E.push([[a[0],RH,a[1]],[b[0],RH,b[1]]]);
+    E.push([[a[0],0,a[1]],[a[0],RH,a[1]]]);
+  }
+  ctx.strokeStyle='rgba(236,232,222,.30)'; ctx.lineWidth=1.1;
+  ctx.beginPath();
+  for(const e of E){
+    const a=toCam([e[0][0]+OX,e[0][1],e[0][2]+OZ]), b=toCam([e[1][0]+OX,e[1][1],e[1][2]+OZ]);
+    if(a[2]<NEAR||b[2]<NEAR) continue;
+    const sa=toScr(a), sb=toScr(b);
+    ctx.moveTo(sa[0],sa[1]); ctx.lineTo(sb[0],sb[1]);
+  }
+  ctx.stroke();
+}
+
+function drawPerson(p){
+  const fx=p.f[0], fy=p.f[1], hx=p.h[0], hy=p.h[1];
+  const dx=hx-fx, dy=hy-fy, L=Math.hypot(dx,dy);
+  if(L<4||L>H*2) return;
+  const ux=dx/L, uy=dy/L, px=-uy, py=ux;
+  const w=L*0.115;
+  const P=(t,s)=>[fx+ux*L*t+px*w*s, fy+uy*L*t+py*w*s];
+  ctx.fillStyle=p.c;
+  ctx.beginPath();
+  const pts=[P(0.0,-0.62),P(0.46,-0.44),P(0.60,-0.90),P(0.76,-0.82),
+             P(0.80,-0.30),P(0.80,0.30),P(0.76,0.82),P(0.60,0.90),
+             P(0.46,0.44),P(0.0,0.62),P(0.0,0.14),P(0.44,0.02),P(0.0,-0.14)];
+  ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.closePath(); ctx.fill();
+  const hc=P(0.92,0);
+  ctx.beginPath(); ctx.arc(hc[0],hc[1],L*0.075,0,7); ctx.fill();
+}
+
+function drawLabels(){
+  const out=[];
+  for(const l of labels){
+    if(l.deckOnly && !layers.deck) continue;
+    if(!l.deckOnly && !layers.ground) continue;             // ground switched off: its labels go too
+    if(l.deckOnly && eye[1]<UNDER) continue;                // standing under the deck: its floor is a ceiling
+    if(l.deckOnly && layers.closed && eye[1]<DECK_TOP+CURTAIN_H) continue;   // event mode: the upstairs disappears
+    if(l.underDeck && layers.deck && elev>1.15) continue;   // looking straight down through the deck
+    const c=toCam([l.x+OX,l.y,l.z+OZ]);
+    if(c[2]<1.2) continue;
+    const s=toScr(c);
+    if(s[0]<-140||s[0]>W+140||s[1]<0||s[1]>H+40) continue;
+    out.push({s:s,d:c[2],l:l});
+  }
+  out.sort((a,b)=>(a.l.tag==='rent'?0:1)-(b.l.tag==='rent'?0:1) || a.d-b.d);
+  const placed=[], keep=[];
+  for(const o of out){
+    const {s,l,d}=o;
+    if(focusRent && l.tag!=='rent') continue;
+    const k=Math.max(0.62,Math.min(1.25,16/d*1.5));
+    const fs=Math.round(12.5*k), fs2=Math.round(10.5*k);
+    ctx.font='650 '+fs+'px Inter,ui-sans-serif,system-ui,sans-serif';
+    const w1=ctx.measureText(l.t).width;
+    ctx.font='500 '+fs2+'px Inter,ui-sans-serif,system-ui,sans-serif';
+    const w2=l.s?ctx.measureText(l.s).width:0;
+    const bw=Math.max(w1,w2)+18*k, bh=(l.s?fs+fs2+13*k:fs+11*k);
+    const x=Math.max(panelW+8,Math.min(W-bw-8,s[0]-bw/2)), y=Math.max(58,s[1]-bh);
+    const r={x:x-3,y:y-3,w:bw+6,h:bh+6};
+    let clash=false;
+    for(const p of placed)
+      if(r.x<p.x+p.w&&r.x+r.w>p.x&&r.y<p.y+p.h&&r.y+r.h>p.y){clash=true;break;}
+    if(clash) continue;
+    placed.push(r);
+    keep.push({s,l,d,k,fs,fs2,bw,bh,x,y});
+  }
+  keep.reverse();
+  for(const o of keep){
+    const {s,l,d,k,fs,fs2,bw,bh,x,y}=o;
+    const cx=x+bw/2+2.5*k;
+    ctx.globalAlpha=Math.max(.5,Math.min(1,(52-d)/26));
+    ctx.strokeStyle='rgba(255,255,255,.22)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(s[0],s[1]); ctx.lineTo(x+bw/2,y+bh); ctx.stroke();
+    roundRect(x,y,bw,bh,7*k);
+    ctx.fillStyle='rgba(16,18,22,.88)'; ctx.fill();
+    ctx.strokeStyle=hexA(l.c,.55); ctx.lineWidth=1.2; ctx.stroke();
+    ctx.fillStyle=l.c;
+    roundRect(x+6*k,y+bh/2-2.2*k-(l.s?fs2*0.35:0),3.2*k,(l.s?fs+fs2*0.6:fs*0.8),1.6*k); ctx.fill();
+    ctx.textAlign='center';
+    ctx.fillStyle='#f2f0ea';
+    ctx.font='650 '+fs+'px Inter,ui-sans-serif,system-ui,sans-serif';
+    ctx.fillText(l.t, cx, y+fs+4*k);
+    if(l.s){ ctx.fillStyle=l.tag==='rent'?'#e0a458':'#9ea3ac';
+      ctx.font='500 '+fs2+'px Inter,ui-sans-serif,system-ui,sans-serif';
+      ctx.fillText(l.s, cx, y+fs+fs2+6*k); }
+    ctx.textAlign='left';
+    ctx.globalAlpha=1;
+  }
+}
+
+function drawDims(){
+  ctx.strokeStyle='rgba(224,164,88,.55)'; ctx.lineWidth=1.2;
+  ctx.font='600 11px Inter,ui-sans-serif,system-ui,sans-serif';
+  for(const d of dims){
+    // in the plan, only the ground-level dimensions make sense; the vertical ones are dots
+    // and the deck-height one drifts in perspective over Peter's coloured areas
+    if(elev>1.2 && (d.a[1]>0 || d.b[1]>0)) continue;
+    const a=toCam([d.a[0]+OX,d.a[1],d.a[2]+OZ]), b=toCam([d.b[0]+OX,d.b[1],d.b[2]+OZ]);
+    if(a[2]<NEAR||b[2]<NEAR) continue;
+    const sa=toScr(a), sb=toScr(b);
+    ctx.beginPath(); ctx.moveTo(sa[0],sa[1]); ctx.lineTo(sb[0],sb[1]); ctx.stroke();
+    [sa,sb].forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],2.6,0,7);ctx.fillStyle='rgba(224,164,88,.8)';ctx.fill();});
+    const mx=(sa[0]+sb[0])/2, my=(sa[1]+sb[1])/2;
+    const w=ctx.measureText(d.t).width;
+    roundRect(mx-w/2-6,my-9,w+12,18,5);
+    ctx.fillStyle='rgba(16,18,22,.85)'; ctx.fill();
+    ctx.fillStyle='#e0a458'; ctx.textAlign='center';
+    ctx.fillText(d.t,mx,my+4); ctx.textAlign='left';
+  }
+}
+
+function drawScaleBar(){
+  if(!layers.scale) return;                      // &scale=0 — photo renders for the event site
+  const a=toCam([OX,0.02,RD+OZ+1.2]), b=toCam([OX+5,0.02,RD+OZ+1.2]);
+  if(a[2]<NEAR||b[2]<NEAR) return;
+  const sa=toScr(a), sb=toScr(b);
+  ctx.strokeStyle='rgba(236,234,228,.45)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(sa[0],sa[1]); ctx.lineTo(sb[0],sb[1]); ctx.stroke();
+  ctx.fillStyle='rgba(236,234,228,.6)';
+  ctx.font='600 10px Inter,ui-sans-serif,system-ui,sans-serif';
+  ctx.fillText('5 m',(sa[0]+sb[0])/2-8,(sa[1]+sb[1])/2+15);
+}
+
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);
+  return'rgba('+((n>>16)&255)+','+((n>>8)&255)+','+(n&255)+','+a+')';}
+
+/* --------------------------------------------------------------------------
+   7. INTERACTION
+   -------------------------------------------------------------------------- */
+let drag=false,moved=0,lx=0,ly=0,pinch=0;
+cv.addEventListener('pointerdown',e=>{drag=true;moved=0;autoSpin=false;
+  lx=e.clientX;ly=e.clientY;cv.classList.add('drag');cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',e=>{if(!drag)return;
+  const dx=e.clientX-lx, dy=e.clientY-ly; moved+=Math.abs(dx)+Math.abs(dy);
+  tw.on=false;
+  azim-=dx*0.006;
+  if(!NOZOOM){elev+=dy*0.005; elev=Math.max(-0.28,Math.min(1.52,elev));}  // hero gif: left/right only
+  lx=e.clientX;ly=e.clientY;});
+addEventListener('pointerup',e=>{
+  if(drag&&moved<6) pick(e.clientX,e.clientY);
+  drag=false;cv.classList.remove('drag');});
+cv.addEventListener('wheel',e=>{if(NOZOOM)return;e.preventDefault();tw.on=false;autoSpin=false;
+  radius=Math.max(4,Math.min(70,radius*(1+e.deltaY*0.0016)));},{passive:false});
+cv.addEventListener('touchstart',e=>{if(e.touches.length===2)
+  pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
+cv.addEventListener('touchmove',e=>{if(NOZOOM)return;if(e.touches.length===2){
+  const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+  tw.on=false; radius=Math.max(4,Math.min(70,radius*(pinch/d)));pinch=d;}},{passive:true});
+
+function inPoly(px,py,poly){
+  let c=false;
+  for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+    const xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1];
+    if(((yi>py)!==(yj>py))&&(px<(xj-xi)*(py-yi)/(yj-yi)+xi)) c=!c;
+  }
+  return c;
+}
+const info=document.getElementById('info');
+function pick(px,py){
+  let best=null;
+  for(const p of pickable){
+    if(p.poly.length<3) continue;
+    if(!inPoly(px,py,p.poly)) continue;
+    if(!best||p.z<best.z) best=p;
+  }
+  if(!best||!best.zone.z.name){ info.classList.remove('on'); return; }
+  showZone(best.zone.z, best.zone.lvl);
+}
+function showZone(z,lvl){
+  document.getElementById('iSw').style.background=z.c;
+  document.getElementById('iNm').innerHTML=z.name;
+  document.getElementById('iSz').innerHTML=(z.pts?sizeOf(z):(z.size||''))+
+    (z.tag==='rent'?' &middot; on the deck &middot; &euro;600 / month':'');
+  document.getElementById('iTx').innerHTML=z.tx||'';
+  info.classList.add('on');
+}
+document.getElementById('infoX').addEventListener('click',()=>info.classList.remove('on'));
+
+document.querySelectorAll('[data-layer]').forEach(cb=>cb.addEventListener('change',()=>{
+  layers[cb.dataset.layer]=cb.checked;}));
+const tg=document.getElementById('tg'), panel=document.getElementById('panel');
+tg.addEventListener('click',()=>panel.classList.toggle('open'));
+
+/* legend, built from the layout so it can never drift from the model */
+(function buildLegend(){
+  const el=document.getElementById('legend');
+  DECKZ.filter(z=>z.tag==='rent').forEach(z=>{
+    const d=document.createElement('div'); d.className='lg';
+    d.innerHTML='<span class="sw" style="background:'+z.c+'"></span>'+z.name+
+      '<span class="m">'+z.size.split('&middot;').pop().trim()+' &middot; &euro;600</span>';
+    d.addEventListener('click',()=>showZone(z,'deck'));
+    el.appendChild(d);
+  });
+  const G=id=>GROUND.find(g=>g.id===id), Dk=id=>DECKZ.find(d=>d.id===id);
+  const front=area(G('front').pts), bay=area(G('bay').pts), ev=front+bay;
+  const wood=area(G('wood').pts)+area(G('wood2').pts);
+  const built=area(G('closet').pts)+area(G('wallcl').pts)+area(G('storage').pts);
+  const terr=area(Dk('terrace').pts);
+  document.getElementById('fEvent').innerHTML='&asymp;'+Math.round(ev)+' m&sup2;';
+  const rows=[
+    [C.ours,'Our office (deck)','24 m&sup2;',()=>showZone(Dk('office'),'deck')],
+    [C.walk,'Looproute (deck)','16 m&sup2;',()=>showZone(Dk('walk'),'deck')],
+    [C.ours,'Kitchen &amp; lunch terrace','&asymp;'+Math.round(terr)+' m&sup2;',()=>showZone(Dk('terrace'),'deck')],
+    [C.floorA,'Event floor &mdash; front strip, 8 m','&asymp;'+Math.round(front)+' m&sup2;',()=>showZone(G('front'),'ground')],
+    [C.floorB,'Event floor &mdash; under the deck, 4 m','&asymp;'+Math.round(bay)+' m&sup2;',()=>showZone(G('bay'),'ground')],
+    [C.wood,'Wood &amp; Build &mdash; Peter&rsquo;s, closed','&asymp;'+Math.round(wood)+' m&sup2;',()=>showZone(G('wood'),'ground')],
+    [C.closet,'Closet, wall closet, storage','&asymp;'+Math.round(built)+' m&sup2; built',()=>showZone(G('closet'),'ground')]
+  ];
+  const el2=document.getElementById('legend2');
+  rows.forEach(s=>{const d=document.createElement('div');d.className='lg';
+    d.innerHTML='<span class="sw" style="background:'+s[0]+'"></span>'+s[1]+'<span class="m">'+s[2]+'</span>';
+    d.addEventListener('click',s[3]); el2.appendChild(d);});
+})();
+
+/* --------------------------------------------------------------------------
+   7b. DEEP-LINK / EMBED — open the model at a chosen view from a URL.
+   the-space-3d.html#v=studio            → start at the "Inside a studio" view
+   the-space-3d.html#v=event&embed=1     → same, chrome hidden, idle frames skipped
+   &spin=1 keeps the slow auto-rotation. Built for tenant-page-bm2-v2.html, which
+   embeds this file several times at different views; in embed mode the loop only
+   renders while something moves, so multiple embeds on one page stay cheap.
+   -------------------------------------------------------------------------- */
+const PARAMS=new URLSearchParams(
+  (location.search||'').replace(/^\?/,'')+'&'+(location.hash||'').replace(/^#/,''));
+const EMBED=PARAMS.get('embed')==='1';
+let needsFrame=6;                              // in embed mode: render a few frames, then rest
+if(EMBED){
+  document.querySelector('.top').style.display='none';
+  document.querySelector('.hint').style.display='none';
+  tg.style.display='none';
+  panel.style.display='none';
+}
+(function startView(){
+  const k=PARAMS.get('v');
+  if(k&&VIEWS[k]){
+    applyView(k,true);
+    tw.on=false; azim=tw.a1; elev=tw.e1; radius=tw.r1; target=tw.g1.slice();  // land instantly
+    autoSpin=PARAMS.get('spin')==='1';
+  }
+  for(const L in layers){                       // per-layer overrides, e.g. &labels=0&dims=0
+    if(!PARAMS.has(L)) continue;
+    const vals=PARAMS.getAll(L);                // duplicated param: the LAST value wins
+    layers[L]=vals[vals.length-1]==='1';
+    const cb=document.querySelector('[data-layer="'+L+'"]'); if(cb) cb.checked=layers[L];
+  }
+  if(PARAMS.get('focus')==='1') focusRent=true;   // grey everything that is not for rent
+  /* free camera for the photo renders: &az=&el=&r=&tx=&ty=&tz= (radians / metres).
+     make_renders.sh composes each shot with these. */
+  let custom=false;
+  if(PARAMS.has('az')){azim=+PARAMS.get('az');custom=true;}
+  if(PARAMS.has('el')){elev=+PARAMS.get('el');custom=true;}
+  if(PARAMS.has('r')) {radius=+PARAMS.get('r');custom=true;}
+  if(PARAMS.has('tx')) target[0]=+PARAMS.get('tx');
+  if(PARAMS.has('ty')) target[1]=+PARAMS.get('ty');
+  if(PARAMS.has('tz')) target[2]=+PARAMS.get('tz');
+  if(custom){autoSpin=false;tw.on=false;}
+})();
+['pointerdown','pointermove','pointerup','wheel','touchstart','touchmove','touchend']
+  .forEach(ev=>cv.addEventListener(ev,()=>{needsFrame=6;},{passive:true}));
+addEventListener('resize',()=>{needsFrame=6;});
+document.querySelectorAll('[data-layer]').forEach(cb=>cb.addEventListener('change',()=>{needsFrame=6;}));
+
+/* --------------------------------------------------------------------------
+   7b2. MINI EMBED UI (Peter, 29 Aug, round 4) — &ui=ground or &ui=deck on an embed
+   shows EXACTLY three buttons and nothing else. ground: the three floor setups
+   (empty / tables / theater — reloads, carrying camera and layers). deck: the three
+   dressing states (floor map / + curtains / + furniture & people — live).
+   The tenant page embeds the model twice this way: once per storey.
+   -------------------------------------------------------------------------- */
+(function miniUI(){
+  const kind=PARAMS.get('ui');
+  if(!EMBED||!kind) return;
+  const bar=document.createElement('div');
+  bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:30;'
+    +'display:flex;gap:6px;background:rgba(22,24,28,.82);padding:6px;border-radius:999px;'
+    +'backdrop-filter:blur(6px)';
+  function mk(label,on,fn){
+    const b=document.createElement('button');
+    b.textContent=label;
+    b.style.cssText='font:600 12.5px/1 -apple-system,system-ui,sans-serif;color:#cfd3da;'
+      +'background:transparent;border:0;border-radius:999px;padding:9px 14px;cursor:pointer';
+    b._paint = (kind==='event')
+      ? v=>{b.style.background=v?'#6400cc':'transparent';b.style.color=v?'#fff':'rgba(0,0,0,.62)';}
+      : v=>{b.style.background=v?'#e8b04b':'transparent';b.style.color=v?'#16181c':'#cfd3da';};
+    b._paint(on);
+    b.addEventListener('click',()=>{fn(b);});
+    bar.appendChild(b); return b;
+  }
+  if(kind==='ground'||kind==='event'){
+    /* 'event' = the event site's navigable embed (Helena, 1 Sep: "I want the 3D model as
+       well", overriding the 31 Aug stills-only decision). Five setups instead of three, and
+       the pill bar is painted for a LIGHT page on the About Collab brand. */
+    const SETS = kind==='event'
+      ? [['empty','Empty'],['default','Workshop'],['dinner','Dinner'],['theater','Talk'],['party','Party']]
+      : [['empty','Empty floor'],['dinner','Tables'],['theater','Theater']];
+    if(kind==='event'){
+      bar.style.background='rgba(255,255,255,.92)';
+      bar.style.boxShadow='0 2px 14px rgba(0,0,0,.16)';
+    }
+    SETS.forEach(([s,lab])=>{
+      mk(lab, SETUP===s, ()=>{
+        if(SETUP===s) return;
+        const h=['setup='+s,'embed=1','ui='+kind,
+          'az='+azim.toFixed(3),'el='+elev.toFixed(3),'r='+radius.toFixed(2),
+          'tx='+target[0].toFixed(2),'ty='+target[1].toFixed(2),'tz='+target[2].toFixed(2)];
+        for(const L in layers) h.push(L+'='+(layers[L]?1:0));
+        location.hash=h.join('&'); location.reload();
+      });
+    });
+  } else if(kind==='wood'){
+    // the About Collab wood & production room: two states — the bare room, or with machines
+    const btns=[];
+    [['floor','Floor'],['mach','+ machines & shelves']].forEach(([m,lab])=>{
+      const on=(m==='mach')===!!layers.furnG;
+      const b=mk(lab,on,(clicked)=>{
+        layers.furnG=(m==='mach');
+        btns.forEach(x=>x._paint(x===clicked)); needsFrame=6;
+      });
+      btns.push(b);
+    });
+  } else if(kind==='deck'){
+    const btns=[];
+    [['bare','Floor map'],['walls','+ curtains'],['furn','+ furniture & people']].forEach(([m,lab])=>{
+      const on=(m==='bare'&&!layers.curtains&&!layers.furnD)||
+               (m==='walls'&&layers.curtains&&!layers.furnD)||
+               (m==='furn'&&layers.furnD);
+      const b=mk(lab,on,(clicked)=>{
+        const st=DECKMODES[m];
+        for(const L in st){
+          layers[L]=!!st[L];
+          const cb=document.querySelector('[data-layer="'+L+'"]'); if(cb) cb.checked=layers[L];
+        }
+        btns.forEach(x=>x._paint(x===clicked)); needsFrame=6;
+      });
+      btns.push(b);
+    });
+  }
+  document.body.appendChild(bar);
+  /* zoom − / + buttons (Peter, 29 Aug, round 6: "niet alleen met je muis") */
+  const zb=document.createElement('div');
+  zb.style.cssText='position:fixed;right:14px;bottom:14px;z-index:30;display:flex;gap:6px;'
+    +'background:rgba(22,24,28,.82);padding:6px;border-radius:999px;backdrop-filter:blur(6px)';
+  [['−',1.25],['+',1/1.25]].forEach(([t,f])=>{
+    const b=document.createElement('button');
+    b.textContent=t;
+    b.style.cssText='font:700 17px/1 -apple-system,system-ui,sans-serif;color:#cfd3da;'
+      +'background:transparent;border:0;border-radius:50%;width:34px;height:34px;cursor:pointer';
+    b.addEventListener('click',()=>{tw.on=false;autoSpin=false;
+      radius=Math.max(4,Math.min(70,radius*f));needsFrame=6;});
+    zb.appendChild(b);
+  });
+  document.body.appendChild(zb);
+})();
+
+/* --------------------------------------------------------------------------
+   7c. SCENE BUTTONS (Peter, 29 Aug — "makkelijke settings")
+   Floor: swaps the event-floor setup. A setup is geometry built at load, so the
+   button reloads the page, carrying the CURRENT camera and every layer state in
+   the hash — you land in the same view, new scene.
+   Deck: three dressing states, live (no reload): bare floor map → + curtains
+   ("the walls") → + furniture, plants and people (the scale).
+   -------------------------------------------------------------------------- */
+document.querySelectorAll('#scenes button[data-s]').forEach(b=>{
+  b.classList.toggle('on', b.dataset.s===SETUP);
+  b.addEventListener('click',()=>{
+    if(b.dataset.s===SETUP) return;
+    const h=['setup='+b.dataset.s,
+      'az='+azim.toFixed(3),'el='+elev.toFixed(3),'r='+radius.toFixed(2),
+      'tx='+target[0].toFixed(2),'ty='+target[1].toFixed(2),'tz='+target[2].toFixed(2)];
+    for(const L in layers) h.push(L+'='+(layers[L]?1:0));
+    if(EMBED) h.push('embed=1');
+    location.hash=h.join('&'); location.reload();
+  });
+});
+const DECKMODES={bare:{curtains:0,furnD:0,peopleD:0,closed:0},
+                 walls:{curtains:1,furnD:0,peopleD:0,closed:0},
+                 furn:{curtains:1,furnD:1,peopleD:1,closed:0}};
+document.querySelectorAll('#scenes button[data-m]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const m=DECKMODES[b.dataset.m];
+    for(const L in m){
+      layers[L]=!!m[L];
+      const cb=document.querySelector('[data-layer="'+L+'"]'); if(cb) cb.checked=layers[L];
+    }
+    document.querySelectorAll('#scenes button[data-m]').forEach(x=>x.classList.toggle('on',x===b));
+    needsFrame=6;
+  });
+});
+
+/* --------------------------------------------------------------------------
+   8. LOOP
+   -------------------------------------------------------------------------- */
+function lerp(a,b,t){return a+(b-a)*t;}
+function easeInOut(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+let lastT=now();
+(function loop(){
+  requestAnimationFrame(loop);
+  const t=now(), dt=Math.min(0.1,(t-lastT)/1000); lastT=t;
+  if(tourOn && t-tourT>4200){
+    tourT=t; tourIdx=(tourIdx+1)%TOUR.length; applyView(TOUR[tourIdx],true);
+  }
+  if(tw.on){
+    const k=Math.min(1,(t-tw.t0)/tw.dur), e=easeInOut(k);
+    azim=lerp(tw.a0,tw.a1,e); elev=lerp(tw.e0,tw.e1,e); radius=lerp(tw.r0,tw.r1,e);
+    for(let i=0;i<3;i++) target[i]=lerp(tw.g0[i],tw.g1[i],e);
+    if(k>=1) tw.on=false;
+  } else if(autoSpin && !drag){
+    azim+=0.085*dt;
+  }
+  const active=tourOn||tw.on||drag||(autoSpin&&!drag);
+  if(!EMBED||active||needsFrame>0){ render(); if(!active&&needsFrame>0) needsFrame--; }
+})();
+</script>
+</body>
+</html>
