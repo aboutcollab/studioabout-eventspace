@@ -71,7 +71,7 @@ section{padding-block:clamp(56px,8vw,110px)}
 /* ---------- hero ---------- */
 .hero{background:var(--paper);color:var(--ink);position:relative;
       padding-block:clamp(44px,6.5vw,84px) 0}
-.hero h1{max-width:17ch}
+.hero h1{max-width:17ch;font-size:clamp(33px,5.6vw,66px)}
 .hero h1 em{font-style:normal}          /* text is black or white — never coloured */
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,4vw,60px);align-items:end}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
@@ -263,3 +263,26 @@ textarea:focus{outline:2px solid var(--purple);outline-offset:0}
 .sent p{color:var(--ink-60);font-size:16px;max-width:44ch;margin:0 auto 10px}
 .sent p b{color:var(--ink)}
 .sent-note{font-size:14px!important;color:var(--ink-45)!important}
+
+/* ---------- hero additions: the use-case strip and the three outcomes ---------- */
+/* The use cases are a LIST, not the phrase "all types of events" — a corporate scanning
+   for three seconds needs to see "offsites, meetings" and know they are in the right
+   place. Showing the coverage proves it; claiming it does not. */
+.usecases{margin:20px 0 0;font-size:clamp(15px,1.55vw,18.5px);font-weight:600;
+          color:var(--ink);line-height:1.55;max-width:none}
+.outcomes{list-style:none;margin:clamp(30px,4vw,46px) 0 0;padding:0;display:grid;
+          grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px);
+          border-top:1px solid var(--rule);padding-top:clamp(18px,2.4vw,26px)}
+@media(max-width:760px){.outcomes{grid-template-columns:1fr;gap:16px}}
+.outcomes li{display:flex;flex-direction:column;gap:3px;padding-left:20px;position:relative}
+.outcomes li::before{content:'';position:absolute;left:0;top:7px;width:10px;height:10px;
+                     background:var(--purple)}
+.outcomes b{font-size:16px;font-weight:700}
+.outcomes span{font-size:14.5px;color:var(--ink-60)}
+
+/* ---------- the prove block ---------- */
+.prove{background:var(--ice)}
+.prove-card{background:var(--paper);border:1px solid var(--rule)}
+.prove-card img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.prove-card h3{margin:18px 20px 8px}
+.prove-card p{margin:0 20px 20px;font-size:15px;color:var(--ink-60)}

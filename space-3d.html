@@ -327,8 +327,27 @@ const faces=[];           // {p:[v..], n:[x,y,z], c:'#rgb', layer, two, pick, al
 const people=[];          // {x,z,y,h,c}
 const labels=[];          // {x,y,z,t,s,c,tag,deckOnly,underDeck}
 const dims=[];            // {a:[x,y,z], b:[x,y,z], t}
+/* EVENT-SITE ONLY — contact shadows. Helena, 1 Sep: the frontal render "doesn't inspire".
+   The largest single reason is that NOTHING TOUCHES THE FLOOR: flat shading with no shadow
+   makes every object look pasted on. A soft ellipse under each thing is the cheapest fix in
+   any renderer and it is most of the difference between a diagram and a picture. */
+const shadows=[];          // {x,z,rx,rz,a} on the ground plane, world metres
+function groundShadow(x,z,rx,rz,a,col){
+  shadows.push({x:x,z:z,rx:rx,rz:rz,a:a==null?0.20:a,col:col||'38,32,50'});}
+/* the same primitive with a colour = a pool of light on the floor. ⚠️ It CANNOT be done as
+   a plate(): plate colours go through shadeHex(), which returns NaN for an rgba() string and
+   paints it black (tried 1 Sep). Canvas-space is the right place for light. */
+function groundGlow(x,z,rx,rz,a){groundShadow(x,z,rx,rz,a,'122,60,196');}
 
 const LIGHT=norm([-0.42,0.83,0.36]);
+/* Aerial perspective. Without it every face is equally crisp at every distance and the
+   render reads as an elevation drawing — flat. Far geometry fades toward the backdrop. */
+const HAZE_NEAR=9, HAZE_FAR=34, HAZE_MAX=0.26;
+function hazed(hex,depth){
+  if(depth<=HAZE_NEAR) return hex;
+  const t=Math.min(1,(depth-HAZE_NEAR)/(HAZE_FAR-HAZE_NEAR));
+  return mix(hex, EVENING?'#3a3350':'#deebf7', t*HAZE_MAX);
+}
 function norm(v){const l=Math.hypot(v[0],v[1],v[2])||1;return[v[0]/l,v[1]/l,v[2]/l];}
 function sub(a,b){return[a[0]-b[0],a[1]-b[1],a[2]-b[2]];}
 function cross(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];}
@@ -694,7 +713,10 @@ crate(2.5,8.4,0.8,0.8,0.55,'#96826a');
    'default' is the everyday scene the interactive model shows; the others are the situation
    photos: ten tables of six for a dinner, rows facing a screen, a party with a DJ booth. */
 const SETUP=(function(){
-  const m=(((location.search||'')+'&'+(location.hash||'')).match(/setup=([a-z]+)/));
+  /* matchAll, LAST one wins — same reason as LAST() further down: the hash must be able to
+     override a setup that is already in the iframe's query string. */
+  const all=[...(((location.search||'')+'&'+(location.hash||'')).matchAll(/setup=([a-z]+)/g))];
+  const m=all.length?all[all.length-1]:null;
   return m?m[1]:'default';
 })();
 /* &sdims=1 — the photo mode for ONE studio: instead of the hall dimensions, draw only the
@@ -838,6 +860,7 @@ const GLOW_GROW='rgba(100,0,204,.80)', GLOW_BULB='rgba(255,225,160,.9)';
 function bigPlant(x,z,s){
   s=s||1;
   const pw=0.20*s;
+  groundShadow(x,z,0.62*s,0.42*s,0.26);
   box(x-pw,0,z-pw, x+pw,0.26*s,z+pw, JGL.potDk,'jungle',{top:JGL.pot});
   box(x-pw*0.84,0.26*s,z-pw*0.84, x+pw*0.84,0.34*s,z+pw*0.84, JGL.pot,'jungle');
   box(x-0.035*s,0.34*s,z-0.035*s, x+0.035*s,0.92*s,z+0.035*s, JGL.potDk,'jungle');   // trunk
@@ -903,6 +926,10 @@ function banner(x,z,yTop,len,w,c){
   /* --- 3. more grow light where the hanging garden is, seen from the event floor --- */
   growBar(4.4,5.72,19.4,5.72, UNDER-0.30);
 
+  /* --- 3b. the grow wall throws a pool onto the floor. Without it the under-deck strip
+       reads as a flat purple band — Helena, 1 Sep: "that middle that is under the space" --- */
+  for(let x=4.0;x<=19.0;x+=2.5) groundGlow(x,6.35,2.1,1.5,0.15);
+
   /* --- 4. festoons across the 8 m half — three runs, deep enough to read as slack --- */
   [7.9,10.6].forEach((z,i)=>festoon(0.6,z,19.4,z, 7.0-i*0.25, 1.85, 20));
 
@@ -937,6 +964,7 @@ const BAR={ z0:7.4, z1:11.6, front:18.42, back:19.90, aisle:19.42,
 
 (function theBar(){
   const B=BAR;
+  groundShadow((B.front+B.back)/2,(B.z0+B.z1)/2,1.35,2.55,0.24);
   // back bar: cabinet against the wall, two shelves, bottles
   box(B.aisle,0,B.z0, B.back,1.05,B.z1, B.cab,'bar',{top:'#4a4f57'});
   [1.42,1.86].forEach(y=>box(B.aisle+0.06,y,B.z0+0.1, B.back-0.02,y+0.07,B.z1-0.1, B.shelf,'bar'));
@@ -953,6 +981,7 @@ const BAR={ z0:7.4, z1:11.6, front:18.42, back:19.90, aisle:19.42,
       {glow:true,glowC:'rgba(1,153,153,.85)'});
   // four stools
   [7.95,8.95,9.95,10.95].forEach(z=>{
+    groundShadow(18.05,z,0.34,0.30,0.20);
     box(17.86,0.70,z-0.19, 18.24,0.78,z+0.19, B.topDk,'bar',{top:B.top});
     box(18.01,0,z-0.05, 18.09,0.70,z+0.05, '#4a4f57','bar');
     box(17.92,0.02,z-0.14, 18.18,0.06,z+0.14, '#4a4f57','bar');
@@ -975,9 +1004,18 @@ const BAR={ z0:7.4, z1:11.6, front:18.42, back:19.90, aisle:19.42,
    &split=b2  closes to the middle room (the 51–100 m² band)
    ⚠️ Scenery, and an ILLUSTRATION of a decided price band — not a surveyed partition line.
    ------------------------------------------------------------------------------------- */
+/* EVENT-SITE ONLY. &mood=evening drops the ambient and lets the festoons, the grow wall
+   and the bar carry the picture. The room is at its best at night and a flat daylight grey
+   is the least flattering light it will ever be in. */
+const MOOD=(function(){
+  const a=[...(((location.search||'')+'&'+(location.hash||'')).matchAll(/mood=([a-z]+)/g))];
+  return a.length?a[a.length-1][1]:'day';
+})();
+const EVENING=MOOD==='evening';
+
 const SPLIT=(function(){
-  const m=(((location.search||'')+'&'+(location.hash||'')).match(/split=(b1|b2)/));
-  return m?m[1]:null;
+  const a=[...(((location.search||'')+'&'+(location.hash||'')).matchAll(/split=(b1|b2)/g))];
+  return a.length?a[a.length-1][1]:null;
 })();
 (function drawSplit(){
   if(!SPLIT) return;
@@ -992,8 +1030,8 @@ const SPLIT=(function(){
   // the curtain itself, drawn as folds so it reads as fabric and not as a wall
   for(let z=6.02;z<11.98;z+=0.30){
     const d=((z*13)%2)?0.055:0.018;
-    box(x-d,TRACK_Y-H,z, x+d,TRACK_Y-0.10,Math.min(z+0.30,11.98), '#6f6257','split',
-        {side:((z*13)%2)?'#7d6f62':'#5f544a'});
+    box(x-d,TRACK_Y-H,z, x+d,TRACK_Y-0.10,Math.min(z+0.30,11.98), '#c3b6a6','split',
+        {side:((z*13)%2)?'#d2c6b7':'#a89b8b'});
   }
 })();
 
@@ -1097,7 +1135,7 @@ const TOUR=['overview','rent','event','under','deck','studio','terrace','overvie
 const layers={deck:true,ground:true,dividers:true,labels:true,dims:true,shell:true,zones:true,
               walls:true,closed:false,shellfloor:true,curtains:true,
               furnG:true,furnD:true,peopleG:true,peopleD:true,
-              stairs:true,woodzone:true,plants:true,scale:true,jungle:true,bar:true,split:true};
+              stairs:true,woodzone:true,plants:true,scale:true,jungle:true,bar:true,split:true,shadows:true};
 let autoSpin=true, tourOn=false, tourIdx=0, tourT=0, focusRent=false;
 
 const tw={on:false,t0:0,dur:1100,a0:0,a1:0,e0:0,e1:0,r0:0,r1:0,g0:[0,0,0],g1:[0,0,0]};
@@ -1159,7 +1197,13 @@ function litColor(f,flip){
   let c=f.c, ny=f.n[1], d=dot(f.n,LIGHT);
   if(f.two&&flip){d=-d;ny=-ny;}
   if(focusRent && f.tag!=='rent') c=mix(c,'#3c414a',0.72);   // everything but the four studios recedes
-  const lum=0.46+0.46*Math.max(0,d)+0.16*(0.5+0.5*ny);
+  let lum=0.46+0.46*Math.max(0,d)+0.16*(0.5+0.5*ny);
+  if(EVENING){
+    /* less of everything, and what is left leans violet — so the warm glows read as the
+       only real light in the room instead of competing with a flat grey ambient. */
+    lum*=0.74;
+    c=mix(c,'#2b2440',0.22);
+  }
   return shadeHex(c,lum);
 }
 
@@ -1172,7 +1216,8 @@ function render(){
      model's blue-grey gradient. The renders are dropped straight onto that background, so
      matching it here means there is no seam to patch afterwards. (Peter's copy keeps the
      gradient — this is one of the few places the two files differ on purpose.) */
-  g.addColorStop(0,'#deebf7'); g.addColorStop(1,'#deebf7');
+  if(EVENING){ g.addColorStop(0,'#161226'); g.addColorStop(1,'#241c3a'); }
+  else       { g.addColorStop(0,'#deebf7'); g.addColorStop(1,'#deebf7'); }
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   const draw=[];
@@ -1206,9 +1251,22 @@ function render(){
        plots read through the curtains and the structure */
     let a=(focusRent && f.tag!=='rent' && f.layer!=='shellfloor')?Math.min(f.alpha,0.38):f.alpha;
     if(GHOSTDECK && (f.deckOnly||f.layer==='deck')) a=Math.min(a,0.20);   // the deck fades, the room below reads
-    draw.push({sp:sp,d:depth+f.bias,c:litColor(f,flip),glow:f.glow,glowC:f.glowC,a:a,f:f});
+    draw.push({sp:sp,d:depth+f.bias,c:hazed(litColor(f,flip),depth),
+               glow:f.glow,glowC:f.glowC,a:a,f:f});
     if(f.pick) pickable.push({poly:sp,z:depth,zone:f.pick});
   }
+
+  if(layers.shadows) for(const sh of shadows){
+    const c=toCam([sh.x+OX,0.012,sh.z+OZ]);
+    if(c[2]<3.2) continue;
+    const ex=toCam([sh.x+OX+sh.rx,0.012,sh.z+OZ]), ez=toCam([sh.x+OX,0.012,sh.z+OZ+sh.rz]);
+    if(ex[2]<3.2||ez[2]<3.2) continue;
+    const sc=toScr(c), sx=toScr(ex), sz=toScr(ez);
+    draw.push({shadow:{c:sc,
+      rx:Math.max(2,Math.hypot(sx[0]-sc[0],sx[1]-sc[1])),
+      ry:Math.max(1.2,Math.hypot(sz[0]-sc[0],sz[1]-sc[1])),
+      a:sh.a,col:sh.col}, d:c[2]+700});   // 700: after the floor (870) and the tints (800),
+  }                            //      before anything standing on them (0)
 
   for(const p of people){
     const onDeck=p.y>=DECK_TOP-0.01;
@@ -1216,6 +1274,19 @@ function render(){
     if(!onDeck && (!layers.ground||!layers.peopleG)) continue;
     const foot=toCam([p.x+OX,p.y,p.z+OZ]), head=toCam([p.x+OX,p.y+p.h,p.z+OZ]);
     if(foot[2]<3.2||head[2]<3.2) continue;
+    if(layers.shadows && !p.stair){
+      const c=toCam([p.x+OX,p.y+0.012,p.z+OZ]);
+      if(c[2]>=3.2){
+        const ex=toCam([p.x+OX+0.30,p.y+0.012,p.z+OZ]), ez=toCam([p.x+OX,p.y+0.012,p.z+OZ+0.30]);
+        if(ex[2]>=3.2&&ez[2]>=3.2){
+          const sc=toScr(c), sx=toScr(ex), sz=toScr(ez);
+          draw.push({shadow:{c:sc,
+            rx:Math.max(2,Math.hypot(sx[0]-sc[0],sx[1]-sc[1])),
+            ry:Math.max(1.2,Math.hypot(sz[0]-sc[0],sz[1]-sc[1])),
+            a:0.17,col:'38,32,50'}, d:c[2]+700});
+        }
+      }
+    }
     draw.push({person:{f:toScr(foot),h:toScr(head),c:p.c},d:(foot[2]+head[2])/2});
   }
 
@@ -1223,13 +1294,29 @@ function render(){
 
   for(const o of draw){
     if(o.person){ drawPerson(o.person); continue; }
+    if(o.shadow){
+      const S=o.shadow;
+      const g=ctx.createRadialGradient(S.c[0],S.c[1],0,S.c[0],S.c[1],Math.max(S.rx,S.ry));
+      g.addColorStop(0,'rgba('+S.col+','+S.a+')');
+      g.addColorStop(0.55,'rgba('+S.col+','+(S.a*0.5)+')');
+      g.addColorStop(1,'rgba('+S.col+',0)');
+      ctx.save(); ctx.translate(S.c[0],S.c[1]); ctx.scale(1,Math.max(0.06,S.ry/S.rx));
+      ctx.beginPath(); ctx.arc(0,0,S.rx,0,Math.PI*2);
+      ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle=g; ctx.fill(); ctx.restore();
+      continue;
+    }
     const s=o.sp;
     ctx.beginPath(); ctx.moveTo(s[0][0],s[0][1]);
     for(let i=1;i<s.length;i++) ctx.lineTo(s[i][0],s[i][1]);
     ctx.closePath();
     if(o.a<1) ctx.globalAlpha=o.a;
     ctx.fillStyle=o.c; ctx.fill();
-    if(o.glow){ ctx.shadowColor=o.glowC||'rgba(255,240,200,.8)'; ctx.shadowBlur=o.glowC?26:18; ctx.fill(); ctx.shadowBlur=0; }
+    if(o.glow){
+      ctx.shadowColor=o.glowC||'rgba(255,240,200,.8)';
+      ctx.shadowBlur=(o.glowC?26:18)*(EVENING?2.0:1);
+      ctx.fill(); if(EVENING) ctx.fill();        // twice = a brighter core after dark
+      ctx.shadowBlur=0;
+    }
     if(o.a<1) ctx.globalAlpha=1;
   }
 
@@ -1266,7 +1353,9 @@ function drawPerson(p){
   const ux=dx/L, uy=dy/L, px=-uy, py=ux;
   const w=L*0.115;
   const P=(t,s)=>[fx+ux*L*t+px*w*s, fy+uy*L*t+py*w*s];
-  ctx.fillStyle=p.c;
+  /* people are drawn as flat silhouettes and never go through litColor, so after dark they
+     stayed at full daylight brightness and glowed like ghosts. Dim and warm them by hand. */
+  ctx.fillStyle = EVENING ? shadeHex(mix(p.c,'#3a3152',0.34),0.80) : p.c;
   ctx.beginPath();
   const pts=[P(0.0,-0.62),P(0.46,-0.44),P(0.60,-0.90),P(0.76,-0.82),
              P(0.80,-0.30),P(0.80,0.30),P(0.76,0.82),P(0.60,0.90),
@@ -1478,7 +1567,13 @@ tg.addEventListener('click',()=>panel.classList.toggle('open'));
    -------------------------------------------------------------------------- */
 const PARAMS=new URLSearchParams(
   (location.search||'').replace(/^\?/,'')+'&'+(location.hash||'').replace(/^#/,''));
-const EMBED=PARAMS.get('embed')==='1';
+/* 🔴 LAST value wins, always. PARAMS is the query string PLUS the hash, and the mini UI
+   navigates by rewriting the HASH and reloading. With PARAMS.get() — which returns the
+   FIRST match — an embed whose src carried ?setup=party could never be changed by a click:
+   the query kept overriding the hash and the setup buttons looked dead (Helena, 1 Sep).
+   The layer loop below already did last-wins; everything else now agrees with it. */
+const LAST=k=>{const v=PARAMS.getAll(k);return v.length?v[v.length-1]:null;};
+const EMBED=LAST('embed')==='1';
 let needsFrame=6;                              // in embed mode: render a few frames, then rest
 if(EMBED){
   document.querySelector('.top').style.display='none';
@@ -1487,28 +1582,32 @@ if(EMBED){
   panel.style.display='none';
 }
 (function startView(){
-  const k=PARAMS.get('v');
+  const k=LAST('v');
   if(k&&VIEWS[k]){
     applyView(k,true);
     tw.on=false; azim=tw.a1; elev=tw.e1; radius=tw.r1; target=tw.g1.slice();  // land instantly
-    autoSpin=PARAMS.get('spin')==='1';
+    autoSpin=LAST('spin')==='1';
   }
   for(const L in layers){                       // per-layer overrides, e.g. &labels=0&dims=0
+    /* 'split' is NOT a 0/1 switch — it takes &split=b1|b2 and section 4jx builds the
+       geometry from that. Left in this loop it evaluated ('b1'==='1') and turned itself
+       off, so the curtain was built and then never drawn. */
+    if(L==='split') continue;
     if(!PARAMS.has(L)) continue;
     const vals=PARAMS.getAll(L);                // duplicated param: the LAST value wins
     layers[L]=vals[vals.length-1]==='1';
     const cb=document.querySelector('[data-layer="'+L+'"]'); if(cb) cb.checked=layers[L];
   }
-  if(PARAMS.get('focus')==='1') focusRent=true;   // grey everything that is not for rent
+  if(LAST('focus')==='1') focusRent=true;   // grey everything that is not for rent
   /* free camera for the photo renders: &az=&el=&r=&tx=&ty=&tz= (radians / metres).
      make_renders.sh composes each shot with these. */
   let custom=false;
-  if(PARAMS.has('az')){azim=+PARAMS.get('az');custom=true;}
-  if(PARAMS.has('el')){elev=+PARAMS.get('el');custom=true;}
-  if(PARAMS.has('r')) {radius=+PARAMS.get('r');custom=true;}
-  if(PARAMS.has('tx')) target[0]=+PARAMS.get('tx');
-  if(PARAMS.has('ty')) target[1]=+PARAMS.get('ty');
-  if(PARAMS.has('tz')) target[2]=+PARAMS.get('tz');
+  if(PARAMS.has('az')){azim=+LAST('az');custom=true;}
+  if(PARAMS.has('el')){elev=+LAST('el');custom=true;}
+  if(PARAMS.has('r')) {radius=+LAST('r');custom=true;}
+  if(PARAMS.has('tx')) target[0]=+LAST('tx');
+  if(PARAMS.has('ty')) target[1]=+LAST('ty');
+  if(PARAMS.has('tz')) target[2]=+LAST('tz');
   if(custom){autoSpin=false;tw.on=false;}
 })();
 ['pointerdown','pointermove','pointerup','wheel','touchstart','touchmove','touchend']
@@ -1524,7 +1623,7 @@ document.querySelectorAll('[data-layer]').forEach(cb=>cb.addEventListener('chang
    The tenant page embeds the model twice this way: once per storey.
    -------------------------------------------------------------------------- */
 (function miniUI(){
-  const kind=PARAMS.get('ui');
+  const kind=LAST('ui');
   if(!EMBED||!kind) return;
   const bar=document.createElement('div');
   bar.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:30;'

@@ -13,7 +13,7 @@
 <nav class="nav"><div class="nav-in">
   <a class="brand" href="index.html">Studio About</a>
   <div class="nav-links"><a href="index.html">The space</a><a href="food.html">The food</a><a href="workshops.html">Workshops</a><a href="use-cases.html">What you can host</a><a href="prices.html">Prices &amp; calculator</a></div>
-  <a class="cta" href="rent.html">Rent the room</a>
+  <a class="cta" href="rent.html">Rent the space</a>
 </div></nav>
 
 <header class="hero"><div class="wrap"><div class="hero-grid">
@@ -36,6 +36,71 @@
     </div>
   </div>
 </div></div></header>
+
+<section><div class="wrap">
+  <p class="eyebrow">Start here</p>
+  <h2>How many of you are there?</h2>
+  <p class="lede">That is the only question that decides the price. Pick the size that fits
+     your group — the room is closed down to it, so a workshop for sixteen sits in a room
+     built for sixteen, not in the corner of a hall.</p>
+  <style>
+    .sizes{display:grid;gap:22px;grid-template-columns:repeat(3,1fr);margin-top:30px}
+    .sizecard{border:1px solid var(--ice-dp);border-radius:8px;overflow:hidden;
+      background:var(--paper);display:flex;flex-direction:column}
+    .sizecard img{width:100%;display:block;background:var(--ice);
+      aspect-ratio:1800/800;object-fit:cover}
+    .sizecard-b{padding:20px 20px 22px;display:flex;flex-direction:column;flex:1}
+    .sizecard-b h3{margin:0 0 4px;font-size:21px}
+    .sizecard-l{margin:0 0 12px;font-size:14.5px;color:var(--ink-60)}
+    .sizecard-p{margin:0 0 12px;font-family:var(--mono);font-size:15px}
+    .sizecard-p span{color:var(--ink-60);font-size:13px}
+    .sizecard-c{margin:0 0 18px;padding:0;list-style:none;font-size:14.5px;line-height:1.75}
+    .sizecard-c li{padding-left:16px;position:relative}
+    .sizecard-c li:before{content:"";position:absolute;left:0;top:.6em;width:7px;height:7px;
+      border-radius:50%;background:var(--purple)}
+    .sizecard .btn{margin-top:auto;text-align:center;font-size:15px}
+    @media(max-width:900px){.sizes{grid-template-columns:1fr}}
+  </style>
+  <div class="sizes">
+  <article class="sizecard">
+    <img src="assets/room/room-small.jpg" alt="The room closed to its small size" loading="lazy">
+    <div class="sizecard-b">
+      <h3>Small</h3>
+      <p class="sizecard-l">A workshop, a team day, a birthday dinner, a small borrel.</p>
+      <p class="sizecard-p"><b>€50</b> per hour
+         <span>· 1–50 m² · cleaning €25</span></p>
+      <ul class="sizecard-c"><li>2–20 at tables, working</li><li>2–28 seated for dinner</li><li>2–66 in rows, facing a screen</li><li>2–40 standing, drinks in hand</li></ul>
+      <a class="btn ghost" href="prices.html?setup=workshop&people=16#calc">Price this size</a>
+    </div>
+  </article>
+  <article class="sizecard">
+    <img src="assets/room/room-middle.jpg" alt="The room closed to its middle size" loading="lazy">
+    <div class="sizecard-b">
+      <h3>Middle</h3>
+      <p class="sizecard-l">A launch, a big team, a party, a seated dinner for forty.</p>
+      <p class="sizecard-p"><b>€75</b> per hour
+         <span>· 51–100 m² · cleaning €50</span></p>
+      <ul class="sizecard-c"><li>21–41 at tables, working</li><li>29–57 seated for dinner</li><li>67–120 in rows, facing a screen</li><li>41–80 standing, drinks in hand</li></ul>
+      <a class="btn ghost" href="prices.html?setup=dinner&people=40#calc">Price this size</a>
+    </div>
+  </article>
+  <article class="sizecard">
+    <img src="assets/room/room-party.jpg" alt="The room closed to its the whole floor size" loading="lazy">
+    <div class="sizecard-b">
+      <h3>The whole floor</h3>
+      <p class="sizecard-l">A conference, a wedding party, a hundred people standing.</p>
+      <p class="sizecard-p"><b>€95</b> per hour
+         <span>· 101–150 m² · cleaning €75</span></p>
+      <ul class="sizecard-c"><li>42–62 at tables, working</li><li>58–85 seated for dinner</li><li>81–120 standing, drinks in hand</li></ul>
+      <a class="btn ghost" href="prices.html?setup=standing&people=90#calc">Price this size</a>
+    </div>
+  </article></div>
+  <p style="font-size:14.5px;color:var(--ink-60);margin-top:22px;max-width:74ch">
+     <b>It is one room.</b> Curtains on ceiling tracks close it to the size you booked, and
+     open again for the next event. That is why one space can hold a workshop for sixteen on
+     Tuesday and a hundred people standing on Saturday — and why you only pay for the part
+     you use.</p>
+</div></section>
 
 <section class="promise tight"><div class="wrap">
   <div class="promise-item"><span class="promise-num">01</span>
@@ -127,7 +192,7 @@
       <li><a href="tel:+31651465308">+31 6 5146 5308</a></li>
     </ul></div>
     <div><h4>Pages</h4><ul>
-      <li><a href="index.html">The space</a></li><li><a href="food.html">The food</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="use-cases.html">What you can host</a></li><li><a href="prices.html">Prices &amp; calculator</a></li><li><a href="rent.html">Rent the room</a></li>
+      <li><a href="index.html">The space</a></li><li><a href="food.html">The food</a></li><li><a href="workshops.html">Workshops</a></li><li><a href="use-cases.html">What you can host</a></li><li><a href="prices.html">Prices &amp; calculator</a></li><li><a href="rent.html">Rent the space</a></li>
     </ul></div>
   </div>
   <p class="draft">Working draft, 01 September 2026 —
