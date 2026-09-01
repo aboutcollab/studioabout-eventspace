@@ -323,3 +323,65 @@ a.prove-card:hover .more{text-decoration:underline}
         display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
 .step h3{margin-bottom:5px}
 .step p{margin:0;font-size:15.5px;color:var(--ink-60)}
+
+/* ============================================================================
+   PHONES. The desktop layout already reflowed, but three things were broken in
+   practice: there was no navigation at all, the segmented controls came apart,
+   and the running total sat below the whole form.
+   ========================================================================== */
+
+/* --- the menu: a <details> disclosure, so it needs no JavaScript --- */
+.menu{display:none;margin-left:auto;position:relative}
+.menu summary{list-style:none;cursor:pointer;width:44px;height:44px;display:flex;
+              align-items:center;justify-content:center;border:2px solid var(--ink);
+              border-radius:999px}
+.menu summary::-webkit-details-marker{display:none}
+.menu summary span,.menu summary span::before,.menu summary span::after{
+  display:block;width:18px;height:2px;background:var(--ink);border-radius:2px}
+.menu summary span{position:relative}
+.menu summary span::before,.menu summary span::after{content:'';position:absolute;left:0}
+.menu summary span::before{top:-6px}
+.menu summary span::after{top:6px}
+.menu[open] summary{background:var(--ink)}
+.menu[open] summary span{background:transparent}
+.menu[open] summary span::before{transform:rotate(45deg);top:0;background:#fff}
+.menu[open] summary span::after{transform:rotate(-45deg);top:0;background:#fff}
+.menu-panel{position:absolute;right:0;top:52px;background:var(--paper);min-width:min(74vw,290px);
+            border:1px solid var(--rule);box-shadow:0 12px 34px rgba(0,0,0,.14);
+            display:flex;flex-direction:column;padding:6px}
+.menu-panel a{padding:13px 14px;text-decoration:none;color:var(--ink);font-weight:600;
+              font-size:16px;border-bottom:1px solid var(--rule)}
+.menu-panel a:last-child{border-bottom:0}
+.menu-panel a[aria-current]{color:var(--purple)}
+@media(max-width:880px){
+  .menu{display:block}
+  .nav .cta{margin-left:auto;padding:9px 15px;font-size:14px}
+  .nav-in{gap:12px}
+  .brand{font-size:18px}
+}
+
+/* --- segmented controls: on a narrow screen the single pill came apart, so each
+       option becomes its own pill in a grid --- */
+@media(max-width:560px){
+  .seg{border:0;border-radius:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+  .seg button{border:2px solid var(--rule);border-radius:999px;padding:11px 10px;
+              text-align:center;font-weight:600}
+  .seg button[aria-pressed="true"]{border-color:var(--ink)}
+}
+
+/* --- the running total, pinned to the bottom of the viewport --- */
+.minibar{display:none}
+@media(max-width:960px){
+  .minibar{position:fixed;left:0;right:0;bottom:0;z-index:70;
+           background:var(--purple);color:#fff;padding:10px max(12px,env(safe-area-inset-left))
+           calc(10px + env(safe-area-inset-bottom));
+           display:flex;align-items:center;gap:12px;
+           box-shadow:0 -6px 22px rgba(0,0,0,.22)}
+  .minibar .mb-fig{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+  .minibar .mb-fig span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+                        text-transform:uppercase;color:var(--onP-70)}
+  .minibar .mb-fig b{font-size:20px;font-weight:800;white-space:nowrap}
+  .minibar .btn{margin-left:auto;padding:12px 18px;font-size:15px;white-space:nowrap}
+  /* the bar must never sit on top of the last thing on the page */
+  body:has(#miniBar:not([hidden])){padding-bottom:74px}
+}

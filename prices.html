@@ -14,6 +14,10 @@
   <a class="brand" href="index.html">Studio About</a>
   <div class="nav-links"><a href="index.html">The space</a><a href="food.html">The food</a><a href="workshops.html">Workshops</a><a href="use-cases.html">What you can host</a><a href="prices.html" aria-current="page">Prices &amp; calculator</a><a href="about.html">About us</a></div>
   <a class="cta" href="rent.html">Rent the space</a>
+  <!-- phones had no navigation at all: seven pages and no way to reach six of them.
+       A <details> menu needs no JavaScript and closes on its own when a link is used. -->
+  <details class="menu"><summary aria-label="Open the menu"><span></span></summary>
+    <div class="menu-panel"><a href="index.html">The space</a><a href="food.html">The food</a><a href="workshops.html">Workshops</a><a href="use-cases.html">What you can host</a><a href="prices.html" aria-current="page">Prices &amp; calculator</a><a href="about.html">About us</a></div></details>
 </div></nav>
 
 <header class="hero" style="padding-bottom:clamp(40px,5vw,70px)">
@@ -140,7 +144,14 @@
 
     <aside class="receipt" id="receipt"></aside>
   </div>
-</div></section>
+</div>
+<!-- On a phone the receipt sits below six steps of form, so the running total — the whole
+     point of the page — is invisible while you use it. This slim bar carries it. -->
+<div class="minibar" id="miniBar" hidden>
+  <div class="mb-fig"><span>Total</span><b id="mbTotal"></b></div>
+  <a class="btn" href="#request">Book this date</a>
+</div>
+</section>
 
 
 <section><div class="wrap">

@@ -131,6 +131,7 @@
   function render(){
     var out = $('#receipt'); if(!out) return;
     var r = calc(), inc = (state.audience === 'private');
+    updateMiniBar(r, inc);
     if(!r.ok){
       var why;
       if(r.h<=0) why = 'Set a start and an end time and the price appears here.';
@@ -186,6 +187,17 @@
     var el = $('#f_servehours');
     if(on && el && !el.value) el.value = Math.max(hours(), D.drinks_min_hours) || '';
     if(!on) state.drinkHours = null;
+  }
+
+  /* the phone's pinned running total. Hidden until there is a real number to show, so
+     it never sits there saying nothing. */
+  function updateMiniBar(r, inc){
+    var bar = $('#miniBar'), fig = $('#mbTotal');
+    if(!bar || !fig) return;
+    if(!r || !r.ok){ bar.hidden = true; return; }
+    fig.textContent = money(inc ? r.incLo : r.exLo, inc ? r.incHi : r.exHi, r.ranged)
+                    + (inc ? '' : ' excl.');
+    bar.hidden = false;
   }
 
   function maxFor(setup){
