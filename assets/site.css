@@ -145,7 +145,11 @@ td.price{font-family:var(--mono);font-weight:500;color:var(--ink);white-space:no
   padding:9px 18px;border-radius:999px;cursor:pointer}
 .setup-btns button[aria-pressed="true"]{background:var(--purple);border-color:var(--purple);color:#fff}
 .setup-stage{border:1px solid var(--rule);overflow:hidden;background:var(--ice)}
-.setup-stage img{width:100%}
+.setup-stage img{width:100%;height:auto;display:block}
+/* height:auto is load-bearing. The <img> carries width/height ATTRIBUTES (good — they
+   reserve space and stop layout shift), but without height:auto the browser honours the
+   attribute as the used height and stretches the picture to it. When the renders went from
+   820px to 600px tall the images were blown up to 820 and looked zoomed (1 Sep). */
 .setup-meta{font-size:14px;color:var(--ink-60);margin-top:10px}
 
 /* ---------- FAQ ---------- */
@@ -291,8 +295,12 @@ textarea:focus{outline:2px solid var(--purple);outline-offset:0}
 .prove-card p{margin:0 20px 20px;font-size:15px;color:var(--ink-60)}
 
 /* ---------- about: the portrait, and the slot that waits for it ---------- */
-.portrait{margin:clamp(30px,4vw,50px) 0 0}
-.portrait img{width:100%;border:1px solid var(--rule)}
+/* the photo is a tall portrait, so it sits in the hero's second column beside the story
+   rather than running full-bleed and leaving half the row empty */
+.founders{align-items:start;gap:clamp(26px,4vw,64px)}
+.portrait{margin:0;max-width:520px}
+@media(max-width:900px){.portrait{margin-top:26px}}
+.portrait img{width:100%;height:auto;border:1px solid var(--rule)}
 .portrait figcaption{font-size:14px;color:var(--ink-60);margin-top:10px}
 /* A visible, deliberate gap — the same pattern the tenant page used for its address.
    Better an obvious hole than a stock photo of somebody else's founders. */
