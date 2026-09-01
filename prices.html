@@ -112,6 +112,29 @@
           <span>I am part of the Het Salon community</span>
           <span class="p">−30%</span></label>
       </fieldset>
+
+      <!-- Helena, 1 Sep: the cross-sell belongs here, at the moment someone is already
+           committing to a date. Opt-in only, and deliberately NO "book a call" button:
+           "just put it like this, because then I'll hunt this person." -->
+      <fieldset class="fieldset">
+        <div class="legend"><span class="stepnum">7</span> <b>A creative workshop</b>
+          <span style="font-weight:400;letter-spacing:0;text-transform:none;
+                       color:var(--ink-45)">optional</span></div>
+        <label class="check" style="max-width:560px">
+          <input type="checkbox" id="f_ac">
+          <span>I would like to hear how About Collab could create a team-bonding art
+                experience for my event</span></label>
+        <div class="row" id="acRow" hidden style="margin-top:12px">
+          <div class="field">
+            <label for="f_acnote">What kind of group is it, and what would you like them to
+              get out of the day?</label>
+            <textarea id="f_acnote" rows="3"></textarea></div>
+        </div>
+        <p class="hint">About Collab is our own creative studio. They run team-bonding art
+           workshops for groups of 4 to 2,000, and the artwork your team makes goes home with
+           you. Tick the box and they come back to you with an idea alongside your booking.
+           <a href="workshops.html"><b>See what they do</b></a>.</p>
+      </fieldset>
     </div>
 
     <aside class="receipt" id="receipt"></aside>
@@ -199,8 +222,8 @@
       </fieldset>
 
       <fieldset class="fieldset">
-        <div class="legend"><span class="stepnum">2</span> <b>Anything we should know</b></div>
-        <textarea id="b_note" name="note" rows="4" placeholder="What is the occasion? Anything you need from us: a particular layout, allergies, music, a photographer?"></textarea>
+        <div class="legend"><span class="stepnum">2</span> <b>Describe the event you are planning</b></div>
+        <textarea id="b_note" name="note" rows="4" placeholder="What is the occasion, who is coming, and what do you need from us? A particular layout, allergies, music, a photographer?"></textarea>
       </fieldset>
 
       <button class="btn" type="submit" style="width:100%">Send your reservation</button>
@@ -213,7 +236,7 @@
   </div>
 </div></section>
 
-<section><div class="wrap"><p class="eyebrow">The details, up front</p><h2>Things you would otherwise have to ask.</h2><div style="margin-top:30px"><details class='faq'><summary>How do the hours work?</summary><p>The hours you book are the hours you have the space. Set-up and clear-out happen inside them, so count them in. Most people need about an hour at each end. You can get in from the time you booked, and if you are still here afterwards the extra time is charged at the same hourly rate. That is how the whole market works; we just say it out loud instead of putting it in a contract you read later.</p></details><details class='faq'><summary>Is the cleaning included?</summary><p>No, and it is on the price list rather than hidden in the hourly rate: €25, €50 or €75 depending on the size of the room. That is our cleaning after you leave. We do expect the space back in order: furniture where you found it, your things gone.</p></details><details class='faq'><summary>What does the room come with?</summary><p>Tables, chairs, and a projector and screen at no charge. We set the room up the way you need it. Tell us the setup when you book. Sound, party lights and a DJ booth are on the extras list.</p></details><details class='faq'><summary>Can we bring our own caterer?</summary><p>Yes, for €150 per event. Our own kitchen is the reason most people book us, so we would rather cook for you, but you are not forced onto it. Drinks are always ours.</p></details><details class='faq'><summary>Is there a deposit?</summary><p>€150, refunded after the event when the space comes back in order. It is not part of the price and carries no BTW.</p></details><details class='faq'><summary>What about noise, and how late can we go?</summary><p>Events can run to 04:00. Every booked hour from 20:00 carries +15%, which pays the person who stays with you. It is in the calculator, so you see it before you ask.</p></details><details class='faq'><summary>Can you make the room smaller?</summary><p>Yes. It is 150 m² with walls that roll, so we build the room around your event rather than sitting you in a hall that is too big. The three sizes on the price list are how we price it; the actual shape is made for you.</p></details><details class='faq'><summary>Do you approve every booking?</summary><p>Yes, always. There is no instant booking here and there never will be. You will hear from us within 24 hours.</p></details></div></div></section>
+<section><div class="wrap"><p class="eyebrow">The details, up front</p><h2>Things you would otherwise have to ask.</h2><div style="margin-top:30px"><details class='faq'><summary>How do the hours work?</summary><p>The hours you book are the hours you have the space. Set-up and clear-out happen inside them, so count them in. Most people need about an hour at each end. You can get in from the time you booked, and if you are still here afterwards the extra time is charged at the same hourly rate. That is how the whole market works; we just say it out loud instead of putting it in a contract you read later.</p></details><details class='faq'><summary>Is the cleaning included?</summary><p>No, and it is on the price list rather than hidden in the hourly rate: €25, €50 or €75 depending on the size of the room. That is our cleaning after you leave. We do expect the space back in order: furniture where you found it, your things gone.</p></details><details class='faq'><summary>What does the room come with?</summary><p>Tables, chairs, and a projector and screen at no charge. We set the room up the way you need it. Tell us the setup when you book. Sound, party lights and a DJ booth are on the extras list.</p></details><details class='faq'><summary>Can we bring our own caterer?</summary><p>Yes, for €150 per event. Our own kitchen is the reason most people book us, so we would rather cook for you, but you are not forced onto it. Drinks are always ours, and we price them well below the market: from €1,75 a person an hour.</p></details><details class='faq'><summary>Is there a deposit?</summary><p>€150, refunded after the event when the space comes back in order. It is not part of the price and carries no BTW.</p></details><details class='faq'><summary>What about noise, and how late can we go?</summary><p>Events can run to 04:00. Every booked hour from 20:00 carries +15%, which pays the person who stays with you. It is in the calculator, so you see it before you ask.</p></details><details class='faq'><summary>Can you make the room smaller?</summary><p>Yes. It is 150 m² with walls that roll, so we build the room around your event rather than sitting you in a hall that is too big. The three sizes on the price list are how we price it; the actual shape is made for you.</p></details><details class='faq'><summary>Do you approve every booking?</summary><p>Yes, always. There is no instant booking here and there never will be. You will hear from us within 24 hours.</p></details></div></div></section>
 
 <footer><div class="wrap">
   <div class="foot-grid">

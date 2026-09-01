@@ -10,7 +10,7 @@
   var state = {
     audience:'business', setup:'workshop', people:24,
     from:'13:00', to:'19:00', date:'',
-    food:'', drinks:'', drinkHours:null, addons:{}, hetsalon:false
+    food:'', drinks:'', drinkHours:null, addons:{}, hetsalon:false, ac:false, acNote:''
   };
 
   /* ---- hours. The guest books their own access window; we never add to it.
@@ -156,6 +156,11 @@
     if(r.ranged){
       h += '<div class="r-warn">The bites are tailored to your event, so the total is a range '+
            'until we have written your offer.</div>';
+    }
+    if(state.ac){
+      h += '<div class="r-line"><span class="l">Creative workshop'
+        + '<small>About Collab will come back with an idea</small></span>'
+        + '<span class="v">to discuss</span></div>';
     }
     h += '<div class="r-note">The hours you book are the hours you have the space, '+
          'set-up and clear-out included. Stay longer and the extra time is charged at the '+
@@ -308,6 +313,17 @@
     });
     var hs = $('#f_hetsalon');
     if(hs) hs.addEventListener('change', function(){ state.hetsalon=hs.checked; render(); });
+
+    /* step 7: the About Collab opt-in. Opening the note field only once it is ticked keeps
+       the calculator short for everyone who does not want a workshop. */
+    var ac = $('#f_ac'), acRow = $('#acRow'), acNote = $('#f_acnote');
+    if(ac) ac.addEventListener('change', function(){
+      state.ac = ac.checked;
+      if(acRow) acRow.hidden = !ac.checked;
+      if(ac.checked && acNote) acNote.focus();
+      render();
+    });
+    if(acNote) acNote.addEventListener('input', function(){ state.acNote = acNote.value; });
 
     /* deep-link presets, so a use-case page opens the calculator already set up:
        ?setup=dinner&people=40&from=18:00&to=23:00&food=dinner_buffet&drinks=p3 */
