@@ -106,7 +106,7 @@
       var dh = Math.max(state.drinkHours || h, D.drinks_min_hours);
       var dd = state.hetsalon ? (1 - D.hetsalon_food_discount) : 1;
       var drName = dr.label.indexOf('—') > -1
-        ? 'Drinks — ' + dr.label.split('—')[1].replace(/^\s*\+\s*/,'').trim()
+        ? 'Drinks: ' + dr.label.split('—')[1].replace(/^\s*\+\s*/,'').trim()
         : dr.label;
       add(drName,
           '€'+dr.pph.toFixed(2).replace('.',',')+' pp per hour × '+pp+' × '+
@@ -135,7 +135,7 @@
       var why;
       if(r.h<=0) why = 'Set a start and an end time and the price appears here.';
       else why = 'For a '+state.setup+' setup we publish prices up to '+
-                 maxFor(state.setup)+' people. Above that, talk to us — we will still make it work.';
+                 maxFor(state.setup)+' people. Above that, talk to us. We will still make it work.';
       out.innerHTML = '<h3>Your event</h3><p class="r-empty">'+why+'</p>';
       return;
     }
@@ -157,7 +157,7 @@
       h += '<div class="r-warn">The bites are tailored to your event, so the total is a range '+
            'until we have written your offer.</div>';
     }
-    h += '<div class="r-note">The hours you book are the hours you have the space — '+
+    h += '<div class="r-note">The hours you book are the hours you have the space, '+
          'set-up and clear-out included. Stay longer and the extra time is charged at the '+
          'same hourly rate.<br>Projector and screen come with the room.</div>';
     h += '<a class="btn" href="#request">Book this date</a>';
@@ -241,7 +241,7 @@
         + '<div class="sent-mark" aria-hidden="true"></div>'
         + '<h3>Thank you, ' + name.split(' ')[0].replace(/[<>&]/g, '') + '.</h3>'
         + '<p>Your reservation for <b>' + when + '</b> is with us. We will come back to you '
-        + 'within 24 hours to confirm the date — nothing is charged before then.</p>'
+        + 'within 24 hours to confirm the date. Nothing is charged before then.</p>'
         + '<p class="sent-note">We will reply to ' + mail.replace(/[<>&]/g, '') + '.</p>'
         + '</div>';
       f.scrollIntoView({block:'center', behavior:'smooth'});
@@ -251,7 +251,7 @@
   /* a plain-text copy of the receipt, kept for the email route */
   function plain(r, inc){
     var t = 'MY EVENT\n';
-    t += 'Date: '+(state.date||'—')+'  '+state.from+'–'+state.to+'  ('+r.h+' h booked)\n';
+    t += 'Date: '+(state.date||'no date yet')+'  '+state.from+'–'+state.to+'  ('+r.h+' h booked)\n';
     t += 'People: '+state.people+', '+state.setup+' setup  →  '+r.band.label+
          ' at €'+r.band.price.toFixed(0)+'/h\n';
     t += (state.audience==='private'?'Private event':'Business event')+
