@@ -82,9 +82,12 @@ section{padding-block:clamp(56px,8vw,110px)}
 .hero-cap b{color:var(--ink);font-weight:700}
 
 /* the price line is a square content frame — square holds content, round holds actions */
+/* One item per row. When these wrapped as a flex line, "Unique Brazilian catering" and
+   "Up to 120 people" landed side by side and the capacity read as a property of the
+   catering rather than of the space. A spec list cannot be misread. */
 .priceline{font-family:var(--mono);font-size:15px;color:var(--ink);
            border:2px solid var(--ink);padding:14px 16px;
-           display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:8px}
+           display:grid;grid-template-columns:1fr;gap:7px;margin-top:8px}
 .priceline b{font-weight:500}
 
 .btn{display:inline-block;background:var(--action);color:#fff;font-weight:700;font-size:16px;
