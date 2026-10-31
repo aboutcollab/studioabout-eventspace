@@ -1516,7 +1516,7 @@ function showZone(z,lvl){
   document.getElementById('iSw').style.background=z.c;
   document.getElementById('iNm').innerHTML=z.name;
   document.getElementById('iSz').innerHTML=(z.pts?sizeOf(z):(z.size||''))+
-    (z.tag==='rent'?' &middot; on the deck &middot; &euro;539 / month':'');
+    (z.tag==='rent'?' &middot; on the deck &middot; &euro;590 / month':'');
   document.getElementById('iTx').innerHTML=z.tx||'';
   info.classList.add('on');
 }
@@ -1533,7 +1533,7 @@ tg.addEventListener('click',()=>panel.classList.toggle('open'));
   DECKZ.filter(z=>z.tag==='rent').forEach(z=>{
     const d=document.createElement('div'); d.className='lg';
     d.innerHTML='<span class="sw" style="background:'+z.c+'"></span>'+z.name+
-      '<span class="m">'+z.size.split('&middot;').pop().trim()+' &middot; &euro;539</span>';
+      '<span class="m">'+z.size.split('&middot;').pop().trim()+' &middot; &euro;590</span>';
     d.addEventListener('click',()=>showZone(z,'deck'));
     el.appendChild(d);
   });
